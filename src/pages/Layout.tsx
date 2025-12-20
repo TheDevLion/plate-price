@@ -1,27 +1,21 @@
 import { Outlet, Link } from "react-router-dom";
+import tabIcon from "../assets/tab-icon.svg"
 
 export const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       
-      <nav className="bg-gray-100 py-4 shadow-md">
-        <ul className="flex justify-center space-x-8">
+      <nav className="bg-gray-100 shadow-md">
+        <ul className="flex justify-center items-center gap-2 bg-gradient-to-br from-purple-500 to-gray-900">          
+          <img src={tabIcon} className="w-[60px]"/>
           <li>
             <Link
               to="/"
-              className="text-gray-700 font-medium hover:text-blue-600 active:text-blue-800 transition-colors"
+              className="text-white font-medium hover:text-gray-400 active:text-gray-500 transition-colors"
             >
-              Unit Measure Converter
+              Plate Price
             </Link>
           </li>
-          {/* {(<li>
-            <Link
-              to="/technical-datasheet"
-              className="text-gray-700 font-medium hover:text-blue-600 active:text-blue-800 transition-colors"
-            >
-              Technical Datasheet
-            </Link>
-          </li>)} */}
         </ul>
       </nav>
 

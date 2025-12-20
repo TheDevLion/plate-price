@@ -1,68 +1,86 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useDatasheets, useSelectedSheet } from "./store";
+import { useState } from "react";
+import { useDatasheets, useSelectedSheet, type TechnicalDatasheetRecord } from "./store";
 import Inventory2 from "@mui/icons-material/Inventory2";
 import { ProductsModal } from "./ProductModal";
 import { ShareButton } from "../../design_system/ShareButton";
+import { ConfirmDialog } from "../../design_system/ConfirmDialog";
 
+const DIALOG_ACTIONS = {
+  ADD_RECEIPT: {
+    id: 'ADD_RECEIPT',
+    title: 'Enter the name for the new receipt:',   
+  },
+  EDIT_RECEIPT: {
+    id: 'EDIT_RECEIPT',    
+    title: 'Enter the new name for the receipt:',
+  },
+  DELETE_RECEIPT: {
+    id: 'DELETE_RECEIPT',    
+    title: 'Are you sure you want to delete this receipt?',
+  },
+}
 
-export const TechnicalDatasheetHeader = () => {
+export const PlatePriceHeader = () => {
   const {selectedSheet, setSelectedSheet} = useSelectedSheet()
   const {datasheets, setDatasheets} = useDatasheets()
   
+  const [openConfirmDialog, setOpenConfirmDialog] = useState<string | undefined>(undefined);
   const [showProductsModal, setShowProductsModal] = useState(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("receipts");
-    if (saved) setDatasheets(JSON.parse(saved));
-  }, []);
+  const handleOpenConfirmDialog = (type: string) => setOpenConfirmDialog(type);
+  const handleCloseConfirmDialog = () => setOpenConfirmDialog(undefined);
 
-  const handleAddReceipt = () => {
-    const name = prompt("Enter new receipt name:");
-    if (!name) return;
+  const handleAddReceipt = (value: string) => {    
+    if (!value) return;
 
-    const newReceipt = { id: Date.now().toString(), name };
+    const newReceipt: TechnicalDatasheetRecord = { id: Date.now().toString(), name: value };
     const newReceiptsState = [...datasheets, newReceipt]
 
     setDatasheets(newReceiptsState);
     setSelectedSheet(newReceipt.id)
-    
-    localStorage.setItem("receipts", JSON.stringify(newReceiptsState));
+    handleCloseConfirmDialog();
   };
 
-  const handleRename = () => {
+  const handleRename = (value: string) => {
     if (!selectedSheet) return;
 
     const currentDatasheetObj = datasheets.find(d => d.id === selectedSheet)
     if (!currentDatasheetObj) return;
 
-    const newName = prompt("Rename receipt:", currentDatasheetObj?.name);
-    if (!newName) return;
+    if (!value) return;
 
-    currentDatasheetObj.name = newName
+    currentDatasheetObj.name = value
     const updatedDatasheets = datasheets.filter(d => d.id !== currentDatasheetObj?.id)
     updatedDatasheets.push(currentDatasheetObj)
 
-    localStorage.setItem("receipts", JSON.stringify(updatedDatasheets));
     setDatasheets(updatedDatasheets);
+    handleCloseConfirmDialog();
   };
 
-  const handleDelete = () => {
+  const handleDelete = (value: string) => {
     if (!selectedSheet) return;
 
     const currentDatasheetObj = datasheets.find(d => d.id === selectedSheet)
     if (!currentDatasheetObj) return;
 
-    if (!confirm("Are you sure you want to delete this receipt?")) return;
+    if (!value) return;
 
-    const updatedDatasheets = datasheets.filter(d => d.id !== currentDatasheetObj?.id)
-    localStorage.setItem("receipts", JSON.stringify(updatedDatasheets));
+    const updatedDatasheets = datasheets.filter(d => d.id !== currentDatasheetObj?.id)    
     setDatasheets(updatedDatasheets);
+
+    handleCloseConfirmDialog();
   };
 
   const handleSelect = (id: string) => {
     if (id) setSelectedSheet(id);
   };
+
+  const CONFIRM_HANDLERS = {
+    [DIALOG_ACTIONS.ADD_RECEIPT.id]: handleAddReceipt,
+    [DIALOG_ACTIONS.EDIT_RECEIPT.id]: handleRename,
+    [DIALOG_ACTIONS.DELETE_RECEIPT.id]: handleDelete,
+  } as const;
 
 
   return (
@@ -91,13 +109,13 @@ export const TechnicalDatasheetHeader = () => {
           <>
             <button
               className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded transition"
-              onClick={handleRename}
+              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.EDIT_RECEIPT.id)}
             >
               <Edit fontSize="small" />
             </button>
             <button
               className="bg-red-600 hover:bg-red-700 text-white p-2 rounded transition"
-              onClick={handleDelete}
+              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.DELETE_RECEIPT.id)}
             >
               <Delete fontSize="small" />
             </button>
@@ -105,8 +123,8 @@ export const TechnicalDatasheetHeader = () => {
         )}
 
         <button
-          className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded shadow transition"
-          onClick={handleAddReceipt}
+          className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded shadow transition m-2"
+          onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECEIPT.id)}
         >
           <Add />
         </button>
@@ -123,6 +141,14 @@ export const TechnicalDatasheetHeader = () => {
       {showProductsModal && (
         <ProductsModal onClose={() => setShowProductsModal(false)} />
       )}
+
+      <ConfirmDialog
+        open={!!openConfirmDialog} 
+        title={DIALOG_ACTIONS[openConfirmDialog as keyof typeof DIALOG_ACTIONS]?.title || ''}
+        onClose={handleCloseConfirmDialog} 
+        onConfirm={CONFIRM_HANDLERS[openConfirmDialog as keyof typeof CONFIRM_HANDLERS] || (() => {})} 
+        noText={openConfirmDialog === DIALOG_ACTIONS.DELETE_RECEIPT.id}
+      />
     </header>
   );
 };

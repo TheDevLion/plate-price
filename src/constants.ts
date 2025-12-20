@@ -1,6 +1,10 @@
-export const STORE_APP_KEYS = ["receipts", "products", "ingredients"];
+export const STORE_APP_KEYS = {
+  receipts: "receipts",
+  products: "products",
+  ingredients: "ingredients"
+};
 
-export const CONVERSIONS_V2 = [
+export const CONVERSIONS = [
   // Volume
   { name: "Fluid Ounce", abbv: "fl_oz", conv_rate: 1, category: "volume" },
   { name: "Gallon", abbv: "gal", conv_rate: 128, category: "volume" },
@@ -15,16 +19,6 @@ export const CONVERSIONS_V2 = [
   { name: "Milligram", abbv: "mg", conv_rate: 0.001, category: "weight" },
   { name: "Ounce", abbv: "oz", conv_rate: 28.3495, category: "weight" },
   { name: "Pound", abbv: "lb", conv_rate: 453.592, category: "weight" },
-
-  // Distance
-  { name: "Meter", abbv: "m", conv_rate: 1, category: "distance" },
-  { name: "Kilometer", abbv: "Km", conv_rate: 1000, category: "distance" },
-  { name: "Millimeter", abbv: "mm", conv_rate: 0.001, category: "distance" },
-  { name: "Centimeter", abbv: "cm", conv_rate: 0.01, category: "distance" },
-  { name: "Mile", abbv: "mi", conv_rate: 1609.344, category: "distance" },
-  { name: "Yard", abbv: "yard", conv_rate: 0.9144, category: "distance" },
-  { name: "Foot", abbv: "ft", conv_rate: 0.3048, category: "distance" },
-  { name: "Inch", abbv: "in", conv_rate: 0.0254, category: "distance" },
 
   // Random
   { name: "Box", abbv: "box", conv_rate: 1, category: "random"},

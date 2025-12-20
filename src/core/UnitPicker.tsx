@@ -1,5 +1,5 @@
 import Autocomplete from "@mui/material/Autocomplete";
-import { CONVERSIONS_V2 } from "../constants";
+import { CONVERSIONS } from "../constants";
 import TextField from "@mui/material/TextField";
 import { Popper, type PopperProps } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -37,7 +37,7 @@ type UnitPickerProps = {
 }
 export const UnitPicker = ({unitState, category, handleUnitChange, abbvVersion} : UnitPickerProps) => {
     const buildAutocompleteOptions = (): Option[] => {
-        let units = CONVERSIONS_V2;
+        let units = CONVERSIONS;
 
         if (category) {
             // filtro por categoria do produto
@@ -45,7 +45,7 @@ export const UnitPicker = ({unitState, category, handleUnitChange, abbvVersion} 
         }
 
         // mantém unitState disponível para conversão direta
-        const selectedUnitObj = CONVERSIONS_V2.find(c => c.abbv === unitState);
+        const selectedUnitObj = CONVERSIONS.find(c => c.abbv === unitState);
         if (selectedUnitObj && !units.some(u => u.abbv === selectedUnitObj.abbv)) {
             // se a unidade selecionada não está no filtro de categoria, adiciona no topo
             units = [selectedUnitObj, ...units];

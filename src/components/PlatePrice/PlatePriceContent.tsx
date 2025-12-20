@@ -1,19 +1,10 @@
 import { useEffect, useState } from "react";
-import { useIngredients, useProducts, useSelectedSheet } from "./store";
+import { useIngredients, useProducts, useSelectedSheet, type Ingredient } from "./store";
 import { UnitPicker, type Option } from "../../core/UnitPicker";
 import { convertValue } from "../../helpers/convert_values";
-import { CONVERSIONS_V2 } from "../../constants";
+import { CONVERSIONS } from "../../constants";
 
-export type Ingredient = {
-  id: string;
-  productId: string;
-  priceId: string;
-  quantity: number | "";
-  unit: string;
-  datasheetId: string;
-};
-
-export const TechnicalDatasheetContent = () => {
+export const PlatePriceContent = () => {
   const { selectedSheet } = useSelectedSheet();
   const { products, setProducts } = useProducts();
   const { ingredients, setIngredients } = useIngredients();
@@ -98,8 +89,7 @@ export const TechnicalDatasheetContent = () => {
     const product = products.find(p => p.id === productId);
     if (!product) return undefined;
 
-    // retorna a categoria da unidade padrão do produto
-    const conversion = CONVERSIONS_V2.find(c => c.abbv === product.unit);
+    const conversion = CONVERSIONS.find(c => c.abbv === product.unit);
     return conversion?.category;
 };
 

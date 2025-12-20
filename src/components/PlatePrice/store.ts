@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
+import { STORE_APP_KEYS } from "../../constants";
 
 //----------------      Basic Types
 export type TechnicalDatasheetRecord = {
@@ -60,7 +61,11 @@ export const initialStore: TechnicalDatasheetState = {
 export const useTechnicalDatasheetStore = create<TechnicalDatasheetStore>()((set) => ({
     ...initialStore,
     setSelectedSheet: (sheetId?: string) => set((state) => ({...state, selectedSheet: sheetId})),
-    setDatasheets: (datasheets: TechnicalDatasheetRecord[]) => set((state) => ({...state, datasheets })),
+    setDatasheets: (datasheets: TechnicalDatasheetRecord[]) => set((state) => {
+        const newState = {...state, datasheets }
+        localStorage.setItem(STORE_APP_KEYS.receipts, JSON.stringify(datasheets));
+        return newState
+    }),
     setProducts: (products: Product[]) => set((state) => ({...state, products })),
     setIngredients: (ingredients: Ingredient[]) => set((state) => ({...state, ingredients }))
 }));

@@ -9,7 +9,7 @@ export function exportLocalStorageToURL(): string {
   try {
     const data: Record<string, unknown> = {};
 
-    STORE_APP_KEYS.forEach((k) => {
+    Object.keys(STORE_APP_KEYS).forEach((k: string) => {
       const v = localStorage.getItem(k);
       if (v != null) data[k] = JSON.parse(v);
     });

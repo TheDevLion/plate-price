@@ -1,4 +1,4 @@
-import { CONVERSIONS_V2 } from "../constants";
+import { CONVERSIONS } from "../constants";
 import { microOperation, OPERATION_ENUM } from "./micro_operations";
 
 export const convertValue = (
@@ -14,8 +14,8 @@ export const convertValue = (
   const value = Number(inputValue);
   const inputUnitToSerach = inputUnit
   const outputUnitToSerach = outputUnit
-  const inputObj = CONVERSIONS_V2.find(u => u.abbv === inputUnitToSerach);
-  const outputObj = CONVERSIONS_V2.find(u => u.abbv === outputUnitToSerach);
+  const inputObj = CONVERSIONS.find(u => u.abbv === inputUnitToSerach);
+  const outputObj = CONVERSIONS.find(u => u.abbv === outputUnitToSerach);
 
   if (!inputObj || !outputObj || inputObj.category !== outputObj.category) {
     return "";
