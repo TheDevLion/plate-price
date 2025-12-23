@@ -1,9 +1,18 @@
 import { Outlet, Link } from "react-router-dom";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import tabIcon from "../assets/tab-icon.svg";
 import { useI18n } from "../i18n";
 
 export const Layout = () => {
   const { t, language, toggleLanguage } = useI18n();
+
+  const toggleFullscreen = async () => {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      return;
+    }
+    await document.documentElement.requestFullscreen();
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -18,6 +27,17 @@ export const Layout = () => {
             >
               {t("appTitle")}
             </Link>
+          </li>
+          <li className="absolute left-3 top-2 sm:hidden">
+            <button
+              className="bg-grape-100 hover:bg-white text-ink p-1 rounded border border-grape-200 shadow-sm"
+              onClick={toggleFullscreen}
+              type="button"
+              aria-label="Toggle fullscreen"
+              title="Toggle fullscreen"
+            >
+              <FullscreenIcon fontSize="small" />
+            </button>
           </li>
           <li className="absolute right-3 top-2">
             <button
