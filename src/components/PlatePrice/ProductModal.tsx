@@ -13,16 +13,15 @@ type Props = {
 
 export const ProductsModal = ({ onClose }: Props) => {
     const { t } = useI18n();
-    const { products, setProducts } = useProducts()
+    const { products, setProducts, loadProducts, saveProducts } = useProducts()
 
     useEffect(() => {
-        const saved = localStorage.getItem("products");
-        if (saved) setProducts(JSON.parse(saved));
-    }, []);
+        loadProducts();
+    }, [loadProducts]);
 
     
     const saveChanges = () => {
-        localStorage.setItem("products", JSON.stringify(products));
+        saveProducts(products);
     };
 
     const handleAddProduct = () => {

@@ -19,9 +19,9 @@ export const Layout = () => {
               {t("appTitle")}
             </Link>
           </li>
-          <li className="sm:absolute sm:right-3">
+          <li className="absolute right-3 top-2">
             <button
-              className="bg-ink hover:bg-black text-white text-xs font-semibold px-2 py-1 rounded"
+              className="bg-grape-100 hover:bg-white text-ink text-xs font-semibold px-2 py-1 rounded border border-grape-200 shadow-sm"
               onClick={toggleLanguage}
               type="button"
             >

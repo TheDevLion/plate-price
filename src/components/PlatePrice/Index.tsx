@@ -2,15 +2,13 @@ import { PlatePriceHeader } from "./PlatePriceHeader";
 import { PlatePriceContent } from "./PlatePriceContent";
 import { useEffect } from "react";
 import { useDatasheets } from "./store";
-import { STORE_APP_KEYS } from "../../constants";
 
 export const PlatePrice = () => {
-  const {setDatasheets} = useDatasheets()
+  const { loadDatasheets } = useDatasheets()
   
   useEffect(() => {
-    const receipts = localStorage.getItem(STORE_APP_KEYS.receipts);
-    if (receipts) setDatasheets(JSON.parse(receipts));
-  }, [])
+    loadDatasheets();
+  }, [loadDatasheets])
 
   return (
     <div className="min-h-screen bg-grape-50">

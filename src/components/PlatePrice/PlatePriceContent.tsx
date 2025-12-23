@@ -4,22 +4,21 @@ import { UnitPicker, type Option } from "../../core/UnitPicker";
 import { convertValue } from "../../helpers/convert_values";
 import { CONVERSIONS } from "../../constants";
 import { useI18n } from "../../i18n";
+import { FieldBlock } from "../../design_system/FieldBlock";
+import { useMemo } from "react";
 
 export const PlatePriceContent = () => {
   const { t } = useI18n();
   const { selectedSheet } = useSelectedSheet();
-  const { products, setProducts } = useProducts();
-  const { ingredients, setIngredients } = useIngredients();
+  const { products, loadProducts } = useProducts();
+  const { ingredients, setIngredients, loadIngredients, saveIngredients } = useIngredients();
 
   const [ingredientsToShow, setIngredientsToShow] = useState<Ingredient[]>([]);
 
   useEffect(() => {
-    const savedIngredients = localStorage.getItem("ingredients");
-    if (savedIngredients) setIngredients(JSON.parse(savedIngredients));
-
-    const savedProducts = localStorage.getItem("products");
-    if (savedProducts) setProducts(JSON.parse(savedProducts));
-  }, []);
+    loadIngredients();
+    loadProducts();
+  }, [loadIngredients, loadProducts]);
 
   useEffect(() => {
     if (ingredients) {
@@ -33,7 +32,7 @@ export const PlatePriceContent = () => {
     const otherReceiptsIngredients = ingredients.filter(i => i.datasheetId !== selectedSheet);
 
     const newTotalIngredients = [...otherReceiptsIngredients, ...newIngredients]
-    localStorage.setItem("ingredients", JSON.stringify(newTotalIngredients));
+    saveIngredients(newTotalIngredients);
     setIngredients(newTotalIngredients)
   };
 
@@ -48,7 +47,7 @@ export const PlatePriceContent = () => {
       unit: "",
       datasheetId: selectedSheet,
     };
-    persistIngredients([...ingredientsToShow, newIngredient]);
+    persistIngredients([newIngredient, ...ingredientsToShow]);
   };
 
   const handleDeleteIngredient = (id: string) => {
@@ -95,6 +94,13 @@ export const PlatePriceContent = () => {
     return conversion?.category;
 };
 
+  const totalCost = useMemo(() => {
+    return ingredientsToShow.reduce((sum, ingredient) => {
+      const value = getProductPrice(ingredient);
+      return sum + (value ?? 0);
+    }, 0);
+  }, [ingredientsToShow, products]);
+
 
   if (!selectedSheet)
     return (
@@ -105,12 +111,24 @@ export const PlatePriceContent = () => {
 
   return (
     <div className="flex flex-col items-center justify-center py-8 px-2">
-      <button
-        onClick={handleAddIngredient}
-        className="mb-6 bg-grape-600 hover:bg-grape-700 text-white px-4 py-2 rounded shadow"
-      >
-        {t("addIngredient")}
-      </button>
+      <div className="w-full max-w-5xl flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 mb-6">
+        <button
+          onClick={handleAddIngredient}
+          className="bg-grape-600 hover:bg-grape-700 text-white px-4 py-2 rounded shadow"
+        >
+          {t("addIngredient")}
+        </button>
+        <div className="flex flex-wrap gap-3 text-sm justify-center sm:justify-end">
+          <div className="bg-white border border-grape-200 rounded-md px-3 py-2 shadow-sm">
+            <span className="text-grape-700">{t("totalIngredients")}:</span>{" "}
+            <span className="font-semibold">{ingredientsToShow.length}</span>
+          </div>
+          <div className="bg-white border border-grape-200 rounded-md px-3 py-2 shadow-sm">
+            <span className="text-grape-700">{t("totalCost")}:</span>{" "}
+            <span className="font-semibold">{t("currencyPrefix")} {totalCost.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
 
       <div className="w-full overflow-x-auto hidden sm:block">
         <table className="min-w-[640px] table-fixed border border-grape-200 shadow-md rounded-xl overflow-hidden text-xs sm:text-sm">
@@ -153,7 +171,7 @@ export const PlatePriceContent = () => {
                       .find((p) => p.id === i.productId)
                       ?.prices.map((pr) => (
                         <option key={pr.id} value={pr.id}>
-                          {pr.description} — ${pr.value}
+                        {pr.description} — {t("currencyPrefix")} {pr.value}
                         </option>
                       ))}
                   </select>
@@ -178,7 +196,7 @@ export const PlatePriceContent = () => {
                   />
                 </td>
                 <td className="border border-grape-200 p-2 text-right font-semibold truncate">
-                  <span className="block truncate">{getProductPrice(i)?.toFixed(2)}</span>
+                  <span className="block truncate">{t("currencyPrefix")} {getProductPrice(i)?.toFixed(2)}</span>
                 </td>
                 <td className="border border-grape-200 p-2 text-center truncate">
                   <button
@@ -201,12 +219,9 @@ export const PlatePriceContent = () => {
             className="border border-grape-200 rounded-lg bg-white shadow-sm"
           >
             <div className="grid grid-cols-1 gap-2 p-3">
-              <div>
-                <div className="text-[10px] uppercase tracking-wide text-grape-700">
-                  {t("tableProduct")}
-                </div>
+              <FieldBlock label={t("tableProduct")}>
                 <select
-                  className="mt-1 border border-grape-200 rounded p-2 w-full text-sm"
+                  className="border border-grape-200 rounded p-2 w-full text-sm"
                   value={i.productId}
                   onChange={(e) => handleChange(i.id, "productId", e.target.value)}
                 >
@@ -217,14 +232,11 @@ export const PlatePriceContent = () => {
                     </option>
                   ))}
                 </select>
-              </div>
+              </FieldBlock>
 
-              <div>
-                <div className="text-[10px] uppercase tracking-wide text-grape-700">
-                  {t("tablePriceDescription")}
-                </div>
+              <FieldBlock label={t("tablePriceDescription")}>
                 <select
-                  className="mt-1 border border-grape-200 rounded p-2 w-full text-sm"
+                  className="border border-grape-200 rounded p-2 w-full text-sm"
                   value={i.priceId}
                   onChange={(e) => handleChange(i.id, "priceId", e.target.value)}
                   disabled={!i.productId}
@@ -234,63 +246,49 @@ export const PlatePriceContent = () => {
                     .find((p) => p.id === i.productId)
                     ?.prices.map((pr) => (
                       <option key={pr.id} value={pr.id}>
-                        {pr.description} — ${pr.value}
+                        {pr.description} — {t("currencyPrefix")} {pr.value}
                       </option>
                     ))}
                 </select>
-              </div>
+              </FieldBlock>
 
             </div>
 
-            <div className="border-t border-grape-200 grid grid-cols-4 gap-2 p-3">
-              <div>
-                <div className="text-[10px] uppercase tracking-wide text-grape-700">
-                  {t("tableQuantity")}
-                </div>
+            <div className="border-t border-grape-200 grid grid-cols-4 gap-2 p-3 items-center">
+              <FieldBlock label={t("tableQuantity")} className="flex flex-col items-center">
                 <input
                   type="number"
-                  className="mt-1 border border-grape-200 rounded p-2 w-full text-sm"
+                  className="border border-grape-200 rounded p-2 w-full text-sm"
                   value={i.quantity}
                   onChange={(e) => {
                     const val = e.target.value;
                     handleChange(i.id, "quantity", val === "" ? "" : Number(val));
                   }}
                 />
-              </div>
-              <div>
-                <div className="text-[10px] uppercase tracking-wide text-grape-700">
-                  {t("tableUnit")}
-                </div>
-                <div className="mt-1">
-                  <UnitPicker 
-                      abbvVersion 
-                      unitState={i.unit}   
-                      category={getUnitCategory(i.productId)}
-                      handleUnitChange={(e, value) => handleUnitChange(i.id, e, value)}
-                  />
-                </div>
-              </div>
+              </FieldBlock>
+              <FieldBlock label={t("tableUnit")} className="flex flex-col items-center">
+                <UnitPicker 
+                    abbvVersion 
+                    unitState={i.unit}   
+                    category={getUnitCategory(i.productId)}
+                    handleUnitChange={(e, value) => handleUnitChange(i.id, e, value)}
+                />
+              </FieldBlock>
 
-              <div>
-                <div className="text-[10px] uppercase tracking-wide text-grape-700">
-                  {t("tableTotal")}
+              <FieldBlock label={t("tableTotal")} className="flex flex-col items-center">
+                <div className="text-sm font-semibold">
+                  {t("currencyPrefix")} {getProductPrice(i)?.toFixed(2)}
                 </div>
-                <div className="mt-1 text-sm font-semibold">
-                  {getProductPrice(i)?.toFixed(2)}
-                </div>
-              </div>
+              </FieldBlock>
 
-              <div>
-                <div className="text-[10px] uppercase tracking-wide text-grape-700">
-                  {t("tableActions")}
-                </div>
+              <FieldBlock label={t("tableActions")} className="flex flex-col items-center">
                 <button
-                  className="mt-1 bg-ink hover:bg-black text-white px-2 py-1 rounded text-xs w-full"
+                  className="bg-ink hover:bg-black text-white px-2 py-1 rounded text-xs w-full"
                   onClick={() => handleDeleteIngredient(i.id)}
                 >
                   {t("delete")}
                 </button>
-              </div>
+              </FieldBlock>
             </div>
           </div>
         ))}
