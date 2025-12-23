@@ -1,7 +1,7 @@
 import type { SyntheticEvent } from "react";
 import { UnitPicker, type Option } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
-import { useI18n } from "../../../i18n";
+import { useI18n } from "../../../i18n/useI18n";
 
 type IngredientTableDesktopProps = {
   ingredients: Ingredient[];

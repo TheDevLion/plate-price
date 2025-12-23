@@ -3,7 +3,7 @@ import { useIngredients, useProducts, useSelectedSheet, type Ingredient } from "
 import type { Option } from "../../../core/UnitPicker";
 import { convertValue } from "../../../helpers/convert_values";
 import { CONVERSIONS } from "../../../constants";
-import { useI18n } from "../../../i18n";
+import { useI18n } from "../../../i18n/useI18n";
 import { IngredientSummary } from "./IngredientSummary";
 import { IngredientTableDesktop } from "./IngredientTableDesktop";
 import { IngredientCardsMobile } from "./IngredientCardsMobile";

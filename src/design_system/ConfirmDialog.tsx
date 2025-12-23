@@ -7,7 +7,7 @@ import {
   TextField,
   Button
 } from '@mui/material';
-import { useI18n } from "../i18n";
+import { useI18n } from "../i18n/useI18n";
 
 export type ConfirmDialogProps = {
   open: boolean;

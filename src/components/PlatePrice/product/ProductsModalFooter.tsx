@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import { useI18n } from "../../../i18n";
+import { useI18n } from "../../../i18n/useI18n";
 
 type ProductsModalFooterProps = {
   onSave: () => void;

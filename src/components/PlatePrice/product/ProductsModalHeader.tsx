@@ -1,5 +1,5 @@
 import { Close, Add } from "@mui/icons-material";
-import { useI18n } from "../../../i18n";
+import { useI18n } from "../../../i18n/useI18n";
 
 type ProductsModalHeaderProps = {
   onAddProduct: () => void;

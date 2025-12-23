@@ -2,7 +2,7 @@ import { Delete } from "@mui/icons-material";
 import type { SyntheticEvent } from "react";
 import { UnitPicker, type Option } from "../../../core/UnitPicker";
 import type { Product } from "../store";
-import { useI18n } from "../../../i18n";
+import { useI18n } from "../../../i18n/useI18n";
 
 type ProductsTableProps = {
   products: Product[];

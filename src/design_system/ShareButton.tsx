@@ -3,7 +3,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useState } from "react";
 import { exportLocalStorageToURL, PAGE_TO_REDIRECT, QUERY_PARAM_KEY } from "./RestoreFromUrlHelper";
-import { useI18n } from "../i18n";
+import { useI18n } from "../i18n/useI18n";
 
 export const ShareButton = () => {
   const { t } = useI18n();

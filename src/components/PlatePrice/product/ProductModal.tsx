@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { Option } from "../../../core/UnitPicker";
 import { useProducts, type Product } from "../store";
-import { useI18n } from "../../../i18n";
+import { useI18n } from "../../../i18n/useI18n";
 import { ProductsModalHeader } from "./ProductsModalHeader";
 import { ProductsTable } from "./ProductsTable";
 import { ProductsModalFooter } from "./ProductsModalFooter";

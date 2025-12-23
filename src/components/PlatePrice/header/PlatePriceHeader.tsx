@@ -5,7 +5,7 @@ import Inventory2 from "@mui/icons-material/Inventory2";
 import { ProductsModal } from "../product/ProductModal";
 import { ShareButton } from "../../../design_system/ShareButton";
 import { ConfirmDialog } from "../../../design_system/ConfirmDialog";
-import { useI18n } from "../../../i18n";
+import { useI18n } from "../../../i18n/useI18n";
 
 export const PlatePriceHeader = () => {
   const { t } = useI18n();

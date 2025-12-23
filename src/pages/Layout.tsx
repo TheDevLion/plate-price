@@ -1,7 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import tabIcon from "../assets/tab-icon.svg";
-import { useI18n } from "../i18n";
+import { useI18n } from "../i18n/useI18n";
 
 export const Layout = () => {
   const { t, language, toggleLanguage } = useI18n();

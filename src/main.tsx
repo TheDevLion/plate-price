@@ -4,7 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import "./index.css";
 import App from "./App.tsx";
 import theme from "./theme";
-import { I18nProvider } from "./i18n";
+import { I18nProvider } from "./i18n/I18nProvider";
 
 createRoot(document.getElementById("root")!).render(
   <ThemeProvider theme={theme}>
