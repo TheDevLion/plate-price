@@ -96,11 +96,11 @@ export const ProductsModal = ({ onClose }: Props) => {
 
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white w-5/6 max-h-[90vh] rounded-lg shadow-lg relative flex flex-col">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-2">
+            <div className="bg-white w-[95%] sm:w-5/6 max-h-[90vh] rounded-lg shadow-lg relative flex flex-col">
                 
                 {/* Header fixo */}
-                <div className="p-8 border-b border-grape-200 flex items-center justify-normal gap-5 sticky top-0 bg-white z-10">
+                <div className="p-6 sm:p-8 border-b border-grape-200 flex flex-col sm:flex-row sm:items-center justify-normal gap-3 sm:gap-5 sticky top-0 bg-white z-10">
                     <h2 className="text-2xl font-bold">{t("productsManagement")}</h2>
                     <button
                         className="bg-grape-600 hover:bg-grape-700 text-white px-3 py-1 rounded flex items-center gap-1"
@@ -117,99 +117,101 @@ export const ProductsModal = ({ onClose }: Props) => {
                 </div>
 
                 {/* Conteúdo scrollável */}
-                <div className="flex-1 overflow-auto p-6">
+                <div className="flex-1 overflow-auto p-4 sm:p-6">
 
-                <table className="w-full border border-grape-200 mb-10">
-                    <thead className="bg-grape-50">
-                    <tr>
-                        <th className="border border-grape-200 p-2">{t("tableName")}</th>
-                        <th className="border border-grape-200 p-2 w-[10%]">{t("tableQtyShort")}</th>
-                        <th className="border border-grape-200 p-2 w-[10%]">{t("tableUnit")}</th>
-                        <th className="border border-grape-200 p-2">{t("tablePrices")}</th>
-                        <th className="border border-grape-200 p-2 w-[20%]">{t("tableActions")}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {products.map((p) => (
-                        <tr key={p.id}>
-                        <td className="border border-grape-200 p-2">
-                            <input
-                            className="border border-grape-200 p-1 w-full"
-                            value={p.name}
-                            onChange={(e) =>
-                                handleChangeProduct(p.id, "name", e.target.value)
-                            }
-                            />
-                        </td>
-                        <td className="border border-grape-200 p-2">
-                            <input
-                            type="number"
-                            className="border border-grape-200 p-1 w-full"
-                            value={p.quantity}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                handleChangeProduct(p.id, "quantity", val === "" ? "" : Number(val));
-                            }}
-                            />
-                        </td>
-                        <td className="border border-grape-200 p-1">
-                            <UnitPicker 
-                                abbvVersion 
-                                unitState={p.unit}   
-                                handleUnitChange={(e, value) => handleUnitChange(p.id, e, value)}
-                            />
-                        </td>
-                        <td className="border border-grape-200 p-2 align-top">
-                            {p.prices.map((pr) => (
-                            <div key={pr.id} className="flex gap-1 mt-1">
+                <div className="w-full overflow-x-auto">
+                    <table className="min-w-[760px] w-full border border-grape-200 mb-10 text-xs sm:text-sm">
+                        <thead className="bg-grape-50">
+                        <tr>
+                            <th className="border border-grape-200 p-2">{t("tableName")}</th>
+                            <th className="border border-grape-200 p-2 w-[10%]">{t("tableQtyShort")}</th>
+                            <th className="border border-grape-200 p-2 w-[10%]">{t("tableUnit")}</th>
+                            <th className="border border-grape-200 p-2">{t("tablePrices")}</th>
+                            <th className="border border-grape-200 p-2 w-[20%]">{t("tableActions")}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {products.map((p) => (
+                            <tr key={p.id}>
+                            <td className="border border-grape-200 p-2">
                                 <input
-                                placeholder={t("description")}
-                                className="border border-grape-200 rounded p-1 flex-1"
-                                value={pr.description}
+                                className="border border-grape-200 p-1 w-full"
+                                value={p.name}
                                 onChange={(e) =>
-                                    handleChangePrice(p.id, pr.id, "description", e.target.value)
+                                    handleChangeProduct(p.id, "name", e.target.value)
                                 }
                                 />
+                            </td>
+                            <td className="border border-grape-200 p-2">
                                 <input
                                 type="number"
-                                className="border border-grape-200 rounded p-1 w-24"
-                                value={pr.value}
+                                className="border border-grape-200 p-1 w-full"
+                                value={p.quantity}
                                 onChange={(e) => {
                                     const val = e.target.value;
-                                    handleChangePrice(p.id, pr.id, "value", val === "" ? "" : Number(val))
+                                    handleChangeProduct(p.id, "quantity", val === "" ? "" : Number(val));
                                 }}
                                 />
+                            </td>
+                            <td className="border border-grape-200 p-1">
+                                <UnitPicker 
+                                    abbvVersion 
+                                    unitState={p.unit}   
+                                    handleUnitChange={(e, value) => handleUnitChange(p.id, e, value)}
+                                />
+                            </td>
+                            <td className="border border-grape-200 p-2 align-top">
+                                {p.prices.map((pr) => (
+                                <div key={pr.id} className="flex gap-1 mt-1">
+                                    <input
+                                    placeholder={t("description")}
+                                    className="border border-grape-200 rounded p-1 flex-1"
+                                    value={pr.description}
+                                    onChange={(e) =>
+                                        handleChangePrice(p.id, pr.id, "description", e.target.value)
+                                    }
+                                    />
+                                    <input
+                                    type="number"
+                                    className="border border-grape-200 rounded p-1 w-24"
+                                    value={pr.value}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        handleChangePrice(p.id, pr.id, "value", val === "" ? "" : Number(val))
+                                    }}
+                                    />
+                                    <button
+                                    className="bg-ink hover:bg-black text-white rounded px-2"
+                                    onClick={() => handleDeletePrice(p.id, pr.id)}
+                                    >
+                                    <Delete fontSize="small" />
+                                    </button>
+                                </div>
+                                ))}
+                            </td>
+                            <td className="border border-grape-200 p-2 text-center justify-center">
                                 <button
-                                className="bg-ink hover:bg-black text-white rounded px-2"
-                                onClick={() => handleDeletePrice(p.id, pr.id)}
+                                className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded mr-1"
+                                onClick={() => handleAddPrice(p.id)}
+                                >
+                                {t("addPrice")}
+                                </button>
+                                <button
+                                className="bg-ink hover:bg-black text-white p-2 rounded"
+                                onClick={() => handleDeleteProduct(p.id)}
                                 >
                                 <Delete fontSize="small" />
                                 </button>
-                            </div>
-                            ))}
-                        </td>
-                        <td className="border border-grape-200 p-2 text-center justify-center">
-                            <button
-                            className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded mr-1"
-                            onClick={() => handleAddPrice(p.id)}
-                            >
-                            {t("addPrice")}
-                            </button>
-                            <button
-                            className="bg-ink hover:bg-black text-white p-2 rounded"
-                            onClick={() => handleDeleteProduct(p.id)}
-                            >
-                            <Delete fontSize="small" />
-                            </button>
-                        </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+                            </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
                 </div>
 
                 {/* Footer fixo */}
-                <div className="p-6 border-t border-grape-200 sticky bottom-0 bg-white z-10 flex justify-end">
+                <div className="p-4 sm:p-6 border-t border-grape-200 sticky bottom-0 bg-white z-10 flex justify-end">
                 <Button
                     variant="contained"
                     startIcon={<SaveIcon />}

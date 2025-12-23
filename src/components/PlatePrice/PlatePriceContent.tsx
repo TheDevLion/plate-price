@@ -104,7 +104,7 @@ export const PlatePriceContent = () => {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center py-8">
+    <div className="flex flex-col items-center justify-center py-8 px-2">
       <button
         onClick={handleAddIngredient}
         className="mb-6 bg-grape-600 hover:bg-grape-700 text-white px-4 py-2 rounded shadow"
@@ -112,23 +112,101 @@ export const PlatePriceContent = () => {
         {t("addIngredient")}
       </button>
 
-      <table className="min-w-[80%] border border-grape-200 shadow-md rounded-xl overflow-hidden">
-        <thead className="bg-grape-50">
-          <tr>
-            <th className="p-2 border border-grape-200">{t("tableProduct")}</th>
-            <th className="p-2 border border-grape-200">{t("tablePriceDescription")}</th>
-            <th className="p-2 border border-grape-200 w-[10%]">{t("tableQuantity")}</th>
-            <th className="p-2 border border-grape-200 w-[10%]">{t("tableUnit")}</th>
-            <th className="p-2 border border-grape-200 w-[10%]">{t("tableTotal")}</th>
-            <th className="p-2 border border-grape-200 w-[10%]">{t("tableActions")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ingredientsToShow.map((i) => (
-            <tr key={i.id}>
-              <td className="border border-grape-200 p-2">
+      <div className="w-full overflow-x-auto hidden sm:block">
+        <table className="min-w-[640px] table-fixed border border-grape-200 shadow-md rounded-xl overflow-hidden text-xs sm:text-sm">
+          <thead className="bg-grape-50">
+            <tr>
+              <th className="p-2 border border-grape-200 w-[26%] truncate">{t("tableProduct")}</th>
+              <th className="p-2 border border-grape-200 w-[28%] truncate">{t("tablePriceDescription")}</th>
+              <th className="p-2 border border-grape-200 w-[10%] truncate">{t("tableQuantity")}</th>
+              <th className="p-2 border border-grape-200 w-[10%] truncate">{t("tableUnit")}</th>
+              <th className="p-2 border border-grape-200 w-[12%] truncate">{t("tableTotal")}</th>
+              <th className="p-2 border border-grape-200 w-[14%] truncate">{t("tableActions")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ingredientsToShow.map((i) => (
+              <tr key={i.id}>
+                <td className="border border-grape-200 p-2 truncate">
+                  <select
+                    className="border border-grape-200 rounded p-1 w-full min-w-0 truncate"
+                    value={i.productId}
+                    onChange={(e) => handleChange(i.id, "productId", e.target.value)}
+                  >
+                    <option value="">{t("selectProduct")}</option>
+                    {products.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td className="border border-grape-200 p-2 truncate">
+                  <select
+                    className="border border-grape-200 rounded p-1 w-full min-w-0 truncate"
+                    value={i.priceId}
+                    onChange={(e) => handleChange(i.id, "priceId", e.target.value)}
+                    disabled={!i.productId}
+                  >
+                    <option value="">{t("selectOption")}</option>
+                    {products
+                      .find((p) => p.id === i.productId)
+                      ?.prices.map((pr) => (
+                        <option key={pr.id} value={pr.id}>
+                          {pr.description} — ${pr.value}
+                        </option>
+                      ))}
+                  </select>
+                </td>
+                <td className="border border-grape-200 p-2 truncate">
+                  <input
+                    type="number"
+                    className="border border-grape-200 rounded p-1 w-full min-w-0"
+                    value={i.quantity}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      handleChange(i.id, "quantity", val === "" ? "" : Number(val))
+                    }}
+                  />
+                </td>
+                <td className="border border-grape-200 p-2 truncate">
+                  <UnitPicker 
+                      abbvVersion 
+                      unitState={i.unit}   
+                      category={getUnitCategory(i.productId)}
+                      handleUnitChange={(e, value) => handleUnitChange(i.id, e, value)}
+                  />
+                </td>
+                <td className="border border-grape-200 p-2 text-right font-semibold truncate">
+                  <span className="block truncate">{getProductPrice(i)?.toFixed(2)}</span>
+                </td>
+                <td className="border border-grape-200 p-2 text-center truncate">
+                  <button
+                    className="bg-ink hover:bg-black text-white px-2 py-1 rounded"
+                    onClick={() => handleDeleteIngredient(i.id)}
+                  >
+                    {t("delete")}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="w-full sm:hidden space-y-3">
+        {ingredientsToShow.map((i) => (
+          <div
+            key={i.id}
+            className="border border-grape-200 rounded-lg bg-white shadow-sm"
+          >
+            <div className="grid grid-cols-1 gap-2 p-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-grape-700">
+                  {t("tableProduct")}
+                </div>
                 <select
-                  className="border border-grape-200 rounded p-1 w-full"
+                  className="mt-1 border border-grape-200 rounded p-2 w-full text-sm"
                   value={i.productId}
                   onChange={(e) => handleChange(i.id, "productId", e.target.value)}
                 >
@@ -139,10 +217,14 @@ export const PlatePriceContent = () => {
                     </option>
                   ))}
                 </select>
-              </td>
-              <td className="border border-grape-200 p-2">
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-grape-700">
+                  {t("tablePriceDescription")}
+                </div>
                 <select
-                  className="border border-grape-200 rounded p-1 w-full"
+                  className="mt-1 border border-grape-200 rounded p-2 w-full text-sm"
                   value={i.priceId}
                   onChange={(e) => handleChange(i.id, "priceId", e.target.value)}
                   disabled={!i.productId}
@@ -156,41 +238,63 @@ export const PlatePriceContent = () => {
                       </option>
                     ))}
                 </select>
-              </td>
-              <td className="border border-grape-200 p-2">
+              </div>
+
+            </div>
+
+            <div className="border-t border-grape-200 grid grid-cols-4 gap-2 p-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-grape-700">
+                  {t("tableQuantity")}
+                </div>
                 <input
                   type="number"
-                  className="border border-grape-200 rounded p-1 w-full"
+                  className="mt-1 border border-grape-200 rounded p-2 w-full text-sm"
                   value={i.quantity}
                   onChange={(e) => {
                     const val = e.target.value;
-                    handleChange(i.id, "quantity", val === "" ? "" : Number(val))
+                    handleChange(i.id, "quantity", val === "" ? "" : Number(val));
                   }}
                 />
-              </td>
-              <td className="border border-grape-200 p-2">
-                <UnitPicker 
-                    abbvVersion 
-                    unitState={i.unit}   
-                    category={getUnitCategory(i.productId)}
-                    handleUnitChange={(e, value) => handleUnitChange(i.id, e, value)}
-                />
-              </td>
-              <td className="border border-grape-200 p-2 text-right font-semibold">
-                {getProductPrice(i)?.toFixed(2)}
-              </td>
-              <td className="border border-grape-200 p-2 text-center">
+              </div>
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-grape-700">
+                  {t("tableUnit")}
+                </div>
+                <div className="mt-1">
+                  <UnitPicker 
+                      abbvVersion 
+                      unitState={i.unit}   
+                      category={getUnitCategory(i.productId)}
+                      handleUnitChange={(e, value) => handleUnitChange(i.id, e, value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-grape-700">
+                  {t("tableTotal")}
+                </div>
+                <div className="mt-1 text-sm font-semibold">
+                  {getProductPrice(i)?.toFixed(2)}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-grape-700">
+                  {t("tableActions")}
+                </div>
                 <button
-                  className="bg-ink hover:bg-black text-white px-2 py-1 rounded"
+                  className="mt-1 bg-ink hover:bg-black text-white px-2 py-1 rounded text-xs w-full"
                   onClick={() => handleDeleteIngredient(i.id)}
                 >
                   {t("delete")}
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

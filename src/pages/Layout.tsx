@@ -9,8 +9,8 @@ export const Layout = () => {
     <div className="min-h-screen flex flex-col">
       
       <nav className="bg-grape-50 shadow-md">
-        <ul className="relative flex justify-center items-center gap-2 bg-gradient-to-br from-grape-500 to-ink">          
-          <img src={tabIcon} className="w-[60px]"/>
+        <ul className="relative flex flex-col items-center gap-2 bg-gradient-to-br from-grape-500 to-ink px-3 py-2 sm:flex-row sm:justify-center">          
+          <img src={tabIcon} className="w-[48px] sm:w-[60px]"/>
           <li>
             <Link
               to="/"
@@ -19,7 +19,7 @@ export const Layout = () => {
               {t("appTitle")}
             </Link>
           </li>
-          <li className="absolute right-3">
+          <li className="sm:absolute sm:right-3">
             <button
               className="bg-ink hover:bg-black text-white text-xs font-semibold px-2 py-1 rounded"
               onClick={toggleLanguage}
@@ -31,7 +31,7 @@ export const Layout = () => {
         </ul>
       </nav>
 
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-2">
         <Outlet />
       </main>
     </div>

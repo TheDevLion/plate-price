@@ -87,17 +87,17 @@ export const PlatePriceHeader = () => {
 
   return (
     <header className="relative flex flex-col items-center justify-center py-2 border-b border-grape-200 bg-white shadow-sm">
-      <div className="absolute top-1 right-1">
+      <div className="self-end mb-2 sm:mb-0 sm:absolute sm:top-1 sm:right-1">
         <ShareButton />
       </div>
 
       <h1 className="font-bold text-3xl mb-3">{t("headerTitle")}</h1>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <select
           value={selectedSheet ?? ""}
           onChange={(e) => handleSelect(e.target.value)}
-          className="border border-grape-200 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-grape-400"
+          className="w-full sm:w-auto border border-grape-200 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-grape-400"
         >
           <option value="">{t("selectReceiptPlaceholder")}</option>
           {datasheets.map((r) => (
@@ -127,7 +127,7 @@ export const PlatePriceHeader = () => {
         )}
 
         <button
-          className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
+          className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-1 sm:m-2"
           onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECEIPT.id)}
           aria-label={t("addReceipt")}
         >
@@ -137,7 +137,7 @@ export const PlatePriceHeader = () => {
       </div>
 
       <button
-        className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
+        className="w-full sm:w-auto bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
         onClick={() => setShowProductsModal(true)}
       >
         <Inventory2 fontSize="small" /> {t("manageProducts")}
