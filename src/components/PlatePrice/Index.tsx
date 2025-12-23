@@ -1,5 +1,5 @@
-import { PlatePriceHeader } from "./PlatePriceHeader";
-import { PlatePriceContent } from "./PlatePriceContent";
+import { PlatePriceHeader } from "./header/PlatePriceHeader";
+import { PlatePriceContent } from "./content/PlatePriceContent";
 import { useEffect } from "react";
 import { useDatasheets } from "./store";
 

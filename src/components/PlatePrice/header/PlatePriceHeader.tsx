@@ -1,11 +1,11 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useState } from "react";
-import { useDatasheets, useSelectedSheet, type TechnicalDatasheetRecord } from "./store";
+import { useDatasheets, useSelectedSheet, type TechnicalDatasheetRecord } from "../store";
 import Inventory2 from "@mui/icons-material/Inventory2";
-import { ProductsModal } from "./ProductModal";
-import { ShareButton } from "../../design_system/ShareButton";
-import { ConfirmDialog } from "../../design_system/ConfirmDialog";
-import { useI18n } from "../../i18n";
+import { ProductsModal } from "../product/ProductModal";
+import { ShareButton } from "../../../design_system/ShareButton";
+import { ConfirmDialog } from "../../../design_system/ConfirmDialog";
+import { useI18n } from "../../../i18n";
 
 export const PlatePriceHeader = () => {
   const { t } = useI18n();
