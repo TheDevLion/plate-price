@@ -47,8 +47,10 @@ export const ConfirmDialog = ({ open, title, onClose, onConfirm, noText }: Confi
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} >Cancel</Button>
-        <Button onClick={handleConfirm} variant="contained">
+        <Button onClick={handleClose} color="secondary">
+          Cancel
+        </Button>
+        <Button onClick={handleConfirm} variant="contained" color="primary">
           OK
         </Button>
       </DialogActions>

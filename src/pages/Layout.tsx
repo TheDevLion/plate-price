@@ -5,13 +5,13 @@ export const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       
-      <nav className="bg-gray-100 shadow-md">
-        <ul className="flex justify-center items-center gap-2 bg-gradient-to-br from-purple-500 to-gray-900">          
+      <nav className="bg-grape-50 shadow-md">
+        <ul className="flex justify-center items-center gap-2 bg-gradient-to-br from-grape-500 to-ink">          
           <img src={tabIcon} className="w-[60px]"/>
           <li>
             <Link
               to="/"
-              className="text-white font-medium hover:text-gray-400 active:text-gray-500 transition-colors"
+              className="text-white font-medium hover:text-grape-100 active:text-grape-200 transition-colors"
             >
               Plate Price
             </Link>

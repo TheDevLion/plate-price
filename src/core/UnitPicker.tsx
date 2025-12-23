@@ -76,7 +76,7 @@ export const UnitPicker = ({unitState, category, handleUnitChange, abbvVersion} 
                     return <li
                         key={key}
                         {...rest} 
-                        className={`px-3 py-2 text-xs cursor-pointer hover:bg-gray-200`}>
+                        className="px-3 py-2 text-xs cursor-pointer hover:bg-grape-100">
                         {option.title}
                     </li>;
                 }}
@@ -110,13 +110,13 @@ export const UnitPicker = ({unitState, category, handleUnitChange, abbvVersion} 
                         padding: 0,
                         paddingRight: abbvVersion ? "0 !important" : undefined,
                         "& fieldset": {
-                            borderColor: "#cfcfcf",
+                            borderColor: "#d3b8ff",
                         },
                         "&:hover fieldset": {
-                            borderColor: "#b0b0b0",
+                            borderColor: "#b089ff",
                         },
                         "&.Mui-focused fieldset": {
-                            borderColor: "#888",
+                            borderColor: "#7438f0",
                         },
                     },
                 }}
@@ -127,7 +127,7 @@ export const UnitPicker = ({unitState, category, handleUnitChange, abbvVersion} 
                     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
                     padding: "0.25rem 0",
                     fontSize: "0.85rem",
-                    color: "#333",
+                    color: "#351b74",
                     },
                 }}
                 

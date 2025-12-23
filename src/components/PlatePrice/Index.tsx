@@ -13,7 +13,7 @@ export const PlatePrice = () => {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-grape-50">
       <PlatePriceHeader />
       <PlatePriceContent />
     </div>

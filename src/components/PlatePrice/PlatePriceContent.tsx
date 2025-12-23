@@ -105,28 +105,28 @@ export const PlatePriceContent = () => {
     <div className="flex flex-col items-center justify-center py-8">
       <button
         onClick={handleAddIngredient}
-        className="mb-6 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
+        className="mb-6 bg-grape-600 hover:bg-grape-700 text-white px-4 py-2 rounded shadow"
       >
         + Add Ingredient
       </button>
 
-      <table className="min-w-[80%] border border-gray-300 shadow-md rounded-xl overflow-hidden">
-        <thead className="bg-gray-100">
+      <table className="min-w-[80%] border border-grape-200 shadow-md rounded-xl overflow-hidden">
+        <thead className="bg-grape-50">
           <tr>
-            <th className="p-2 border">Product</th>
-            <th className="p-2 border">Price/Description</th>
-            <th className="p-2 border w-[10%]">Qtd.</th>
-            <th className="p-2 border w-[10%]">Unit</th>
-            <th className="p-2 border w-[10%]">Total</th>
-            <th className="p-2 border w-[10%]">Actions</th>
+            <th className="p-2 border border-grape-200">Product</th>
+            <th className="p-2 border border-grape-200">Price/Description</th>
+            <th className="p-2 border border-grape-200 w-[10%]">Qtd.</th>
+            <th className="p-2 border border-grape-200 w-[10%]">Unit</th>
+            <th className="p-2 border border-grape-200 w-[10%]">Total</th>
+            <th className="p-2 border border-grape-200 w-[10%]">Actions</th>
           </tr>
         </thead>
         <tbody>
           {ingredientsToShow.map((i) => (
             <tr key={i.id}>
-              <td className="border p-2">
+              <td className="border border-grape-200 p-2">
                 <select
-                  className="border rounded p-1 w-full"
+                  className="border border-grape-200 rounded p-1 w-full"
                   value={i.productId}
                   onChange={(e) => handleChange(i.id, "productId", e.target.value)}
                 >
@@ -138,9 +138,9 @@ export const PlatePriceContent = () => {
                   ))}
                 </select>
               </td>
-              <td className="border p-2">
+              <td className="border border-grape-200 p-2">
                 <select
-                  className="border rounded p-1 w-full"
+                  className="border border-grape-200 rounded p-1 w-full"
                   value={i.priceId}
                   onChange={(e) => handleChange(i.id, "priceId", e.target.value)}
                   disabled={!i.productId}
@@ -155,10 +155,10 @@ export const PlatePriceContent = () => {
                     ))}
                 </select>
               </td>
-              <td className="border p-2">
+              <td className="border border-grape-200 p-2">
                 <input
                   type="number"
-                  className="border rounded p-1 w-full"
+                  className="border border-grape-200 rounded p-1 w-full"
                   value={i.quantity}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -166,7 +166,7 @@ export const PlatePriceContent = () => {
                   }}
                 />
               </td>
-              <td className="border p-2">
+              <td className="border border-grape-200 p-2">
                 <UnitPicker 
                     abbvVersion 
                     unitState={i.unit}   
@@ -174,12 +174,12 @@ export const PlatePriceContent = () => {
                     handleUnitChange={(e, value) => handleUnitChange(i.id, e, value)}
                 />
               </td>
-              <td className="border p-2 text-right font-semibold">
+              <td className="border border-grape-200 p-2 text-right font-semibold">
                 {getProductPrice(i)?.toFixed(2)}
               </td>
-              <td className="border p-2 text-center">
+              <td className="border border-grape-200 p-2 text-center">
                 <button
-                  className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                  className="bg-ink hover:bg-black text-white px-2 py-1 rounded"
                   onClick={() => handleDeleteIngredient(i.id)}
                 >
                   Delete

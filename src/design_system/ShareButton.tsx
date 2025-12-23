@@ -27,7 +27,7 @@ export const ShareButton = () => {
         color="primary"
         startIcon={copied ? <ContentCopyIcon /> : <ShareIcon />}
         onClick={handleShare}
-        className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded shadow transition m-2"
+        sx={{ m: 1 }}
       >
         {copied ? "Copied!" : "Share"}
       </Button>

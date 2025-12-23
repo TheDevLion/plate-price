@@ -84,7 +84,7 @@ export const PlatePriceHeader = () => {
 
 
   return (
-    <header className="relative flex flex-col items-center justify-center py-2 border-b border-gray-300 bg-white shadow-sm">
+    <header className="relative flex flex-col items-center justify-center py-2 border-b border-grape-200 bg-white shadow-sm">
       <div className="absolute top-1 right-1">
         <ShareButton />
       </div>
@@ -95,7 +95,7 @@ export const PlatePriceHeader = () => {
         <select
           value={selectedSheet ?? ""}
           onChange={(e) => handleSelect(e.target.value)}
-          className="border rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-grape-200 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-grape-400"
         >
           <option value="">-- Select Receipt --</option>
           {datasheets.map((r) => (
@@ -108,13 +108,13 @@ export const PlatePriceHeader = () => {
         {selectedSheet && (
           <>
             <button
-              className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded transition"
+              className="bg-ink hover:bg-black text-white p-2 rounded transition"
               onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.EDIT_RECEIPT.id)}
             >
               <Edit fontSize="small" />
             </button>
             <button
-              className="bg-red-600 hover:bg-red-700 text-white p-2 rounded transition"
+              className="bg-ink hover:bg-black text-white p-2 rounded transition"
               onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.DELETE_RECEIPT.id)}
             >
               <Delete fontSize="small" />
@@ -123,7 +123,7 @@ export const PlatePriceHeader = () => {
         )}
 
         <button
-          className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded shadow transition m-2"
+          className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
           onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECEIPT.id)}
         >
           <Add />
@@ -132,7 +132,7 @@ export const PlatePriceHeader = () => {
       </div>
 
       <button
-        className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded shadow transition m-2"
+        className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
         onClick={() => setShowProductsModal(true)}
       >
         <Inventory2 fontSize="small" /> Manage Products
