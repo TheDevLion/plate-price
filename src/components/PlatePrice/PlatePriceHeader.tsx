@@ -5,25 +5,27 @@ import Inventory2 from "@mui/icons-material/Inventory2";
 import { ProductsModal } from "./ProductModal";
 import { ShareButton } from "../../design_system/ShareButton";
 import { ConfirmDialog } from "../../design_system/ConfirmDialog";
-
-const DIALOG_ACTIONS = {
-  ADD_RECEIPT: {
-    id: 'ADD_RECEIPT',
-    title: 'Enter the name for the new receipt:',   
-  },
-  EDIT_RECEIPT: {
-    id: 'EDIT_RECEIPT',    
-    title: 'Enter the new name for the receipt:',
-  },
-  DELETE_RECEIPT: {
-    id: 'DELETE_RECEIPT',    
-    title: 'Are you sure you want to delete this receipt?',
-  },
-}
+import { useI18n } from "../../i18n";
 
 export const PlatePriceHeader = () => {
+  const { t } = useI18n();
   const {selectedSheet, setSelectedSheet} = useSelectedSheet()
   const {datasheets, setDatasheets} = useDatasheets()
+
+  const DIALOG_ACTIONS = {
+    ADD_RECEIPT: {
+      id: "ADD_RECEIPT",
+      title: t("confirmAddTitle"),
+    },
+    EDIT_RECEIPT: {
+      id: "EDIT_RECEIPT",
+      title: t("confirmEditTitle"),
+    },
+    DELETE_RECEIPT: {
+      id: "DELETE_RECEIPT",
+      title: t("confirmDeleteTitle"),
+    },
+  };
   
   const [openConfirmDialog, setOpenConfirmDialog] = useState<string | undefined>(undefined);
   const [showProductsModal, setShowProductsModal] = useState(false);
@@ -89,7 +91,7 @@ export const PlatePriceHeader = () => {
         <ShareButton />
       </div>
 
-      <h1 className="font-bold text-3xl mb-3">Technical Datasheet</h1>
+      <h1 className="font-bold text-3xl mb-3">{t("headerTitle")}</h1>
 
       <div className="flex items-center gap-3">
         <select
@@ -97,7 +99,7 @@ export const PlatePriceHeader = () => {
           onChange={(e) => handleSelect(e.target.value)}
           className="border border-grape-200 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-grape-400"
         >
-          <option value="">-- Select Receipt --</option>
+          <option value="">{t("selectReceiptPlaceholder")}</option>
           {datasheets.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name}
@@ -110,12 +112,14 @@ export const PlatePriceHeader = () => {
             <button
               className="bg-ink hover:bg-black text-white p-2 rounded transition"
               onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.EDIT_RECEIPT.id)}
+              aria-label={t("editReceipt")}
             >
               <Edit fontSize="small" />
             </button>
             <button
               className="bg-ink hover:bg-black text-white p-2 rounded transition"
               onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.DELETE_RECEIPT.id)}
+              aria-label={t("deleteReceipt")}
             >
               <Delete fontSize="small" />
             </button>
@@ -125,6 +129,7 @@ export const PlatePriceHeader = () => {
         <button
           className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
           onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECEIPT.id)}
+          aria-label={t("addReceipt")}
         >
           <Add />
         </button>
@@ -135,7 +140,7 @@ export const PlatePriceHeader = () => {
         className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
         onClick={() => setShowProductsModal(true)}
       >
-        <Inventory2 fontSize="small" /> Manage Products
+        <Inventory2 fontSize="small" /> {t("manageProducts")}
       </button>
 
       {showProductsModal && (

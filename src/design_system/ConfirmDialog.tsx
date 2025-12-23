@@ -7,6 +7,7 @@ import {
   TextField,
   Button
 } from '@mui/material';
+import { useI18n } from "../i18n";
 
 export type ConfirmDialogProps = {
   open: boolean;
@@ -17,6 +18,7 @@ export type ConfirmDialogProps = {
 };
 
 export const ConfirmDialog = ({ open, title, onClose, onConfirm, noText }: ConfirmDialogProps) => {
+  const { t } = useI18n();
   const [value, setValue] = useState('');
 
   const handleConfirm = () => {
@@ -48,10 +50,10 @@ export const ConfirmDialog = ({ open, title, onClose, onConfirm, noText }: Confi
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
-          Cancel
+          {t("cancel")}
         </Button>
         <Button onClick={handleConfirm} variant="contained" color="primary">
-          OK
+          {t("ok")}
         </Button>
       </DialogActions>
     </Dialog>

@@ -3,8 +3,10 @@ import ShareIcon from "@mui/icons-material/Share";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useState } from "react";
 import { exportLocalStorageToURL, PAGE_TO_REDIRECT, QUERY_PARAM_KEY } from "./RestoreFromUrlHelper";
+import { useI18n } from "../i18n";
 
 export const ShareButton = () => {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
@@ -21,7 +23,7 @@ export const ShareButton = () => {
   };
 
   return (
-    <Tooltip title={copied ? "Copied!" : "Share this datasheet"}>
+    <Tooltip title={copied ? t("copied") : t("shareTooltip")}>
       <Button
         variant="contained"
         color="primary"
@@ -29,7 +31,7 @@ export const ShareButton = () => {
         onClick={handleShare}
         sx={{ m: 1 }}
       >
-        {copied ? "Copied!" : "Share"}
+        {copied ? t("copied") : t("share")}
       </Button>
     </Tooltip>
   );

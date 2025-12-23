@@ -3,8 +3,10 @@ import { useIngredients, useProducts, useSelectedSheet, type Ingredient } from "
 import { UnitPicker, type Option } from "../../core/UnitPicker";
 import { convertValue } from "../../helpers/convert_values";
 import { CONVERSIONS } from "../../constants";
+import { useI18n } from "../../i18n";
 
 export const PlatePriceContent = () => {
+  const { t } = useI18n();
   const { selectedSheet } = useSelectedSheet();
   const { products, setProducts } = useProducts();
   const { ingredients, setIngredients } = useIngredients();
@@ -97,7 +99,7 @@ export const PlatePriceContent = () => {
   if (!selectedSheet)
     return (
       <h3 className="flex justify-center m-10">
-        Select a technical datasheet first.
+        {t("selectDatasheetFirst")}
       </h3>
     );
 
@@ -107,18 +109,18 @@ export const PlatePriceContent = () => {
         onClick={handleAddIngredient}
         className="mb-6 bg-grape-600 hover:bg-grape-700 text-white px-4 py-2 rounded shadow"
       >
-        + Add Ingredient
+        {t("addIngredient")}
       </button>
 
       <table className="min-w-[80%] border border-grape-200 shadow-md rounded-xl overflow-hidden">
         <thead className="bg-grape-50">
           <tr>
-            <th className="p-2 border border-grape-200">Product</th>
-            <th className="p-2 border border-grape-200">Price/Description</th>
-            <th className="p-2 border border-grape-200 w-[10%]">Qtd.</th>
-            <th className="p-2 border border-grape-200 w-[10%]">Unit</th>
-            <th className="p-2 border border-grape-200 w-[10%]">Total</th>
-            <th className="p-2 border border-grape-200 w-[10%]">Actions</th>
+            <th className="p-2 border border-grape-200">{t("tableProduct")}</th>
+            <th className="p-2 border border-grape-200">{t("tablePriceDescription")}</th>
+            <th className="p-2 border border-grape-200 w-[10%]">{t("tableQuantity")}</th>
+            <th className="p-2 border border-grape-200 w-[10%]">{t("tableUnit")}</th>
+            <th className="p-2 border border-grape-200 w-[10%]">{t("tableTotal")}</th>
+            <th className="p-2 border border-grape-200 w-[10%]">{t("tableActions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -130,7 +132,7 @@ export const PlatePriceContent = () => {
                   value={i.productId}
                   onChange={(e) => handleChange(i.id, "productId", e.target.value)}
                 >
-                  <option value="">Select product</option>
+                  <option value="">{t("selectProduct")}</option>
                   {products.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
@@ -145,7 +147,7 @@ export const PlatePriceContent = () => {
                   onChange={(e) => handleChange(i.id, "priceId", e.target.value)}
                   disabled={!i.productId}
                 >
-                  <option value="">Select option</option>
+                  <option value="">{t("selectOption")}</option>
                   {products
                     .find((p) => p.id === i.productId)
                     ?.prices.map((pr) => (
@@ -182,7 +184,7 @@ export const PlatePriceContent = () => {
                   className="bg-ink hover:bg-black text-white px-2 py-1 rounded"
                   onClick={() => handleDeleteIngredient(i.id)}
                 >
-                  Delete
+                  {t("delete")}
                 </button>
               </td>
             </tr>

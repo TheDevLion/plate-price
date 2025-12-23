@@ -4,6 +4,7 @@ import { UnitPicker, type Option } from "../../core/UnitPicker";
 import { useProducts, type Product } from "./store";
 import { Button } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import { useI18n } from "../../i18n";
 
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export const ProductsModal = ({ onClose }: Props) => {
+    const { t } = useI18n();
     const { products, setProducts } = useProducts()
 
     useEffect(() => {
@@ -35,7 +37,7 @@ export const ProductsModal = ({ onClose }: Props) => {
     };
 
     const handleDeleteProduct = (id: string) => {
-        if (!confirm("Delete this product?")) return;
+        if (!confirm(t("deleteProductConfirm"))) return;
         setProducts(products.filter((p) => p.id !== id));
     };
 
@@ -99,12 +101,12 @@ export const ProductsModal = ({ onClose }: Props) => {
                 
                 {/* Header fixo */}
                 <div className="p-8 border-b border-grape-200 flex items-center justify-normal gap-5 sticky top-0 bg-white z-10">
-                    <h2 className="text-2xl font-bold">Products Management</h2>
+                    <h2 className="text-2xl font-bold">{t("productsManagement")}</h2>
                     <button
                         className="bg-grape-600 hover:bg-grape-700 text-white px-3 py-1 rounded flex items-center gap-1"
                         onClick={handleAddProduct}
                     >
-                        <Add fontSize="small" /> Add Product
+                        <Add fontSize="small" /> {t("addProduct")}
                     </button>
                     <button
                         className="text-ink-soft hover:text-ink absolute top-1 right-1"
@@ -120,11 +122,11 @@ export const ProductsModal = ({ onClose }: Props) => {
                 <table className="w-full border border-grape-200 mb-10">
                     <thead className="bg-grape-50">
                     <tr>
-                        <th className="border border-grape-200 p-2">Name</th>
-                        <th className="border border-grape-200 p-2 w-[10%]">Qnt.</th>
-                        <th className="border border-grape-200 p-2 w-[10%]">Unit</th>
-                        <th className="border border-grape-200 p-2">Prices</th>
-                        <th className="border border-grape-200 p-2 w-[20%]">Actions</th>
+                        <th className="border border-grape-200 p-2">{t("tableName")}</th>
+                        <th className="border border-grape-200 p-2 w-[10%]">{t("tableQtyShort")}</th>
+                        <th className="border border-grape-200 p-2 w-[10%]">{t("tableUnit")}</th>
+                        <th className="border border-grape-200 p-2">{t("tablePrices")}</th>
+                        <th className="border border-grape-200 p-2 w-[20%]">{t("tableActions")}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -161,7 +163,7 @@ export const ProductsModal = ({ onClose }: Props) => {
                             {p.prices.map((pr) => (
                             <div key={pr.id} className="flex gap-1 mt-1">
                                 <input
-                                placeholder="Description"
+                                placeholder={t("description")}
                                 className="border border-grape-200 rounded p-1 flex-1"
                                 value={pr.description}
                                 onChange={(e) =>
@@ -191,7 +193,7 @@ export const ProductsModal = ({ onClose }: Props) => {
                             className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded mr-1"
                             onClick={() => handleAddPrice(p.id)}
                             >
-                            + Price
+                            {t("addPrice")}
                             </button>
                             <button
                             className="bg-ink hover:bg-black text-white p-2 rounded"
@@ -213,7 +215,7 @@ export const ProductsModal = ({ onClose }: Props) => {
                     startIcon={<SaveIcon />}
                     onClick={saveChanges}
                 >
-                    Save
+                    {t("save")}
                 </Button>
                 </div>
 
