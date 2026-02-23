@@ -33,14 +33,21 @@ export const productQuantity = (product: Product) => product[2];
 export const productUnit = (product: Product) => product[3];
 export const productPrices = (product: Product) => product[4];
 
-export type Ingredient = {
-  id: string;
-  productId: string;
-  priceId: string;
-  quantity: number | "";
-  unit: string;
-  datasheetId: string;
-};
+export type Ingredient = [string, string, string, number | "", string, string];
+export const makeIngredient = (
+  id: string,
+  productIdValue: string,
+  priceIdValue: string,
+  quantity: number | "",
+  unit: string,
+  datasheetId: string
+): Ingredient => [id, productIdValue, priceIdValue, quantity, unit, datasheetId];
+export const ingredientId = (ingredient: Ingredient) => ingredient[0];
+export const ingredientProductId = (ingredient: Ingredient) => ingredient[1];
+export const ingredientPriceId = (ingredient: Ingredient) => ingredient[2];
+export const ingredientQuantity = (ingredient: Ingredient) => ingredient[3];
+export const ingredientUnit = (ingredient: Ingredient) => ingredient[4];
+export const ingredientDatasheetId = (ingredient: Ingredient) => ingredient[5];
 
 
 //----------------      Store Types
