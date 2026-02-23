@@ -2,6 +2,16 @@ import { Delete } from "@mui/icons-material";
 import type { SyntheticEvent } from "react";
 import { UnitPicker, type Option } from "../../../core/UnitPicker";
 import type { Product } from "../store";
+import {
+  productId,
+  productName,
+  productPrices,
+  productQuantity,
+  productUnit,
+  priceId,
+  priceDescription,
+  priceValue,
+} from "../store";
 import { useI18n } from "../../../i18n/useI18n";
 
 type ProductsTableProps = {
@@ -9,7 +19,7 @@ type ProductsTableProps = {
   onAddPrice: (productId: string) => void;
   onDeleteProduct: (productId: string) => void;
   onDeletePrice: (productId: string, priceId: string) => void;
-  onChangeProduct: (id: string, field: keyof Product, value: number | string) => void;
+  onChangeProduct: (id: string, field: "name" | "quantity" | "unit", value: number | string) => void;
   onChangePrice: (
     productId: string,
     priceId: string,
@@ -48,23 +58,23 @@ export const ProductsTable = ({
         </thead>
         <tbody>
           {products.map((product) => (
-            <tr key={product.id}>
+            <tr key={productId(product)}>
               <td className="border border-grape-200 p-2">
                 <input
                   className="border border-grape-200 p-1 w-full"
-                  value={product.name}
-                  onChange={(e) => onChangeProduct(product.id, "name", e.target.value)}
+                  value={productName(product)}
+                  onChange={(e) => onChangeProduct(productId(product), "name", e.target.value)}
                 />
               </td>
               <td className="border border-grape-200 p-2">
                 <input
                   type="number"
                   className="border border-grape-200 p-1 w-full"
-                  value={product.quantity}
+                  value={productQuantity(product)}
                   onChange={(e) => {
                     const val = e.target.value;
                     onChangeProduct(
-                      product.id,
+                      productId(product),
                       "quantity",
                       val === "" ? "" : Number(val)
                     );
@@ -74,30 +84,30 @@ export const ProductsTable = ({
               <td className="border border-grape-200 p-1">
                 <UnitPicker
                   abbvVersion
-                  unitState={product.unit}
-                  handleUnitChange={(e, value) => onUnitChange(product.id, e, value)}
+                  unitState={productUnit(product)}
+                  handleUnitChange={(e, value) => onUnitChange(productId(product), e, value)}
                 />
               </td>
               <td className="border border-grape-200 p-2 align-top">
-                {product.prices.map((price) => (
-                  <div key={price.id} className="flex gap-1 mt-1">
+                {productPrices(product).map((price) => (
+                  <div key={priceId(price)} className="flex gap-1 mt-1">
                     <input
                       placeholder={t("description")}
                       className="border border-grape-200 rounded p-1 flex-1"
-                      value={price.description}
+                      value={priceDescription(price)}
                       onChange={(e) =>
-                        onChangePrice(product.id, price.id, "description", e.target.value)
+                        onChangePrice(productId(product), priceId(price), "description", e.target.value)
                       }
                     />
                     <input
                       type="number"
                       className="border border-grape-200 rounded p-1 w-24"
-                      value={price.value}
+                      value={priceValue(price)}
                       onChange={(e) => {
                         const val = e.target.value;
                         onChangePrice(
-                          product.id,
-                          price.id,
+                          productId(product),
+                          priceId(price),
                           "value",
                           val === "" ? "" : Number(val)
                         );
@@ -105,7 +115,7 @@ export const ProductsTable = ({
                     />
                     <button
                       className="bg-ink hover:bg-black text-white rounded px-2"
-                      onClick={() => onDeletePrice(product.id, price.id)}
+                      onClick={() => onDeletePrice(productId(product), priceId(price))}
                     >
                       <Delete fontSize="small" />
                     </button>
@@ -115,13 +125,13 @@ export const ProductsTable = ({
               <td className="border border-grape-200 p-2 text-center justify-center">
                 <button
                   className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded mr-1"
-                  onClick={() => onAddPrice(product.id)}
+                  onClick={() => onAddPrice(productId(product))}
                 >
                   {t("addPrice")}
                 </button>
                 <button
                   className="bg-ink hover:bg-black text-white p-2 rounded"
-                  onClick={() => onDeleteProduct(product.id)}
+                  onClick={() => onDeleteProduct(productId(product))}
                 >
                   <Delete fontSize="small" />
                 </button>

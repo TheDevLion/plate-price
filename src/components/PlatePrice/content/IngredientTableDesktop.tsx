@@ -1,6 +1,14 @@
 import type { SyntheticEvent } from "react";
 import { UnitPicker, type Option } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
+import {
+  productId,
+  productName,
+  productPrices,
+  priceId,
+  priceDescription,
+  priceValue,
+} from "../store";
 import { useI18n } from "../../../i18n/useI18n";
 
 type IngredientTableDesktopProps = {
@@ -66,8 +74,8 @@ export const IngredientTableDesktop = ({
                 >
                   <option value="">{t("selectProduct")}</option>
                   {products.map((product) => (
-                    <option key={product.id} value={product.id}>
-                      {product.name}
+                    <option key={productId(product)} value={productId(product)}>
+                      {productName(product)}
                     </option>
                   ))}
                 </select>
@@ -82,13 +90,17 @@ export const IngredientTableDesktop = ({
                   disabled={!ingredient.productId}
                 >
                   <option value="">{t("selectOption")}</option>
-                  {products
-                    .find((product) => product.id === ingredient.productId)
-                    ?.prices.map((price) => (
-                      <option key={price.id} value={price.id}>
-                        {price.description} — {t("currencyPrefix")} {price.value}
+                  {(() => {
+                    const selectedProduct = products.find(
+                      (product) => productId(product) === ingredient.productId
+                    );
+                    if (!selectedProduct) return null;
+                    return productPrices(selectedProduct).map((price) => (
+                      <option key={priceId(price)} value={priceId(price)}>
+                        {priceDescription(price)} - {t("currencyPrefix")} {priceValue(price)}
                       </option>
-                    ))}
+                    ));
+                  })()}
                 </select>
               </td>
               <td className="border border-grape-200 p-2 truncate">

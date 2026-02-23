@@ -9,19 +9,29 @@ export const makeReceipt = (id: string, name: string): TechnicalDatasheetRecord 
 export const receiptId = (receipt: TechnicalDatasheetRecord) => receipt[0];
 export const receiptName = (receipt: TechnicalDatasheetRecord) => receipt[1];
 
-export type Product = {
-  id: string;
-  name: string;
-  quantity: number | "";
-  unit: string;
-  prices: ProductPrice[];
-};
+export type ProductPrice = [string, string, number | ""];
+export const makePrice = (id: string, description: string, value: number | ""): ProductPrice => [
+  id,
+  description,
+  value,
+];
+export const priceId = (price: ProductPrice) => price[0];
+export const priceDescription = (price: ProductPrice) => price[1];
+export const priceValue = (price: ProductPrice) => price[2];
 
-export type ProductPrice = {
-    id: string;
-    description: string;
-    value: number | "";
-}
+export type Product = [string, string, number | "", string, ProductPrice[]];
+export const makeProduct = (
+  id: string,
+  name: string,
+  quantity: number | "",
+  unit: string,
+  prices: ProductPrice[]
+): Product => [id, name, quantity, unit, prices];
+export const productId = (product: Product) => product[0];
+export const productName = (product: Product) => product[1];
+export const productQuantity = (product: Product) => product[2];
+export const productUnit = (product: Product) => product[3];
+export const productPrices = (product: Product) => product[4];
 
 export type Ingredient = {
   id: string;

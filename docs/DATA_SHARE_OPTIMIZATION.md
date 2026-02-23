@@ -14,9 +14,16 @@ IDs across the app are now generated using a single global auto-increment counte
 
 ## 2. JSON structure of stored data keys
 
-### 2.1 Overview
-Receipts are now stored as positional arrays instead of objects to reduce size and make the schema explicit.
+### Overview
+Receipts and products (including product prices) are now stored as positional arrays instead of objects to reduce size and make the schema explicit.
 
 ### Receipts format (v2)
 - Each receipt is stored as `[id, name]`
 - The in-memory type is `TechnicalDatasheetRecord = [string, string]`
+
+### Products format (v2)
+- Each product is stored as `[id, name, quantity, unit, prices]`
+- Each price is stored as `[id, description, value]`
+- In-memory types:
+  - `Product = [string, string, number | \"\", string, ProductPrice[]]`
+  - `ProductPrice = [string, string, number | \"\"]`

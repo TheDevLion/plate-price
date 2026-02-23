@@ -1,5 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { useIngredients, useProducts, useSelectedSheet, type Ingredient } from "../store";
+import {
+  useIngredients,
+  useProducts,
+  useSelectedSheet,
+  type Ingredient,
+  productId,
+  productPrices,
+  productQuantity,
+  productUnit,
+  priceId,
+  priceValue,
+} from "../store";
 import { getNextId } from "../../../helpers/idCounter";
 import type { Option } from "../../../core/UnitPicker";
 import { convertValue } from "../../../helpers/convert_values";
@@ -68,16 +79,23 @@ export const PlatePriceContent = () => {
   };
 
   const getProductPrice = (ing: Ingredient) => {
-    const product = products.find((p) => p.id === ing.productId);
-    const price = product?.prices.find((pr) => pr.id === ing.priceId);
+    const product = products.find((p) => productId(p) === ing.productId);
+    const price = product ? productPrices(product).find((pr) => priceId(pr) === ing.priceId) : undefined;
 
     const inputValue = ing.quantity
     const inputUnit = ing.unit
-    const outputUnit = product?.unit
+    const outputUnit = product ? productUnit(product) : undefined
     const parcialResult = convertValue(inputValue, inputUnit, outputUnit ?? "")
 
-    if (parcialResult && product?.quantity)
-      return price && price.value && ing.quantity ? price.value * (Number(parcialResult) / product?.quantity) : 0;
+    if (parcialResult && product) {
+      const qty = Number(productQuantity(product));
+      if (!qty) return 0;
+      const priceNum = price ? Number(priceValue(price)) : 0;
+      const ingQty = Number(ing.quantity);
+      return price && priceNum && ingQty
+        ? priceNum * (Number(parcialResult) / qty)
+        : 0;
+    }
   };
 
   const handleUnitChange = (productId: string, _: React.SyntheticEvent<Element, Event>, value: Option | null) => {
@@ -86,13 +104,13 @@ export const PlatePriceContent = () => {
         handleChange(productId, "unit", unit);
     };
 
-  const getUnitCategory = (productId: string) => {
-    if (!productId) return undefined;
+  const getUnitCategory = (productIdValue: string) => {
+    if (!productIdValue) return undefined;
 
-    const product = products.find(p => p.id === productId);
+    const product = products.find(p => productId(p) === productIdValue);
     if (!product) return undefined;
 
-    const conversion = CONVERSIONS.find(c => c.abbv === product.unit);
+    const conversion = CONVERSIONS.find(c => c.abbv === productUnit(product));
     return conversion?.category;
 };
 
