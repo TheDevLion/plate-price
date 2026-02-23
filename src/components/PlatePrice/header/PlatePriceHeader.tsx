@@ -1,6 +1,7 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useState } from "react";
 import { useDatasheets, useSelectedSheet, type TechnicalDatasheetRecord } from "../store";
+import { getNextId } from "../../../helpers/idCounter";
 import Inventory2 from "@mui/icons-material/Inventory2";
 import { ProductsModal } from "../product/ProductModal";
 import { ShareButton } from "../../../design_system/ShareButton";
@@ -36,7 +37,7 @@ export const PlatePriceHeader = () => {
   const handleAddReceipt = (value: string) => {    
     if (!value) return;
 
-    const newReceipt: TechnicalDatasheetRecord = { id: Date.now().toString(), name: value };
+    const newReceipt: TechnicalDatasheetRecord = { id: getNextId(), name: value };
     const newReceiptsState = [...datasheets, newReceipt]
 
     setDatasheets(newReceiptsState);

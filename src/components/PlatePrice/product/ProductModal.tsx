@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { Option } from "../../../core/UnitPicker";
 import { useProducts, type Product } from "../store";
+import { getNextId } from "../../../helpers/idCounter";
 import { useI18n } from "../../../i18n/useI18n";
 import { ProductsModalHeader } from "./ProductsModalHeader";
 import { ProductsTable } from "./ProductsTable";
@@ -26,7 +27,7 @@ export const ProductsModal = ({ onClose }: Props) => {
 
     const handleAddProduct = () => {
         const newProd: Product = {
-            id: Date.now().toString(),
+            id: getNextId(),
             name: "",
             quantity: 1,
             unit: "",
@@ -42,7 +43,7 @@ export const ProductsModal = ({ onClose }: Props) => {
 
     const handleAddPrice = (prodId: string) => {
         const newPrice = {
-            id: Date.now().toString(),
+            id: getNextId(),
             description: "",
             value: 0,   
         };

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useIngredients, useProducts, useSelectedSheet, type Ingredient } from "../store";
+import { getNextId } from "../../../helpers/idCounter";
 import type { Option } from "../../../core/UnitPicker";
 import { convertValue } from "../../../helpers/convert_values";
 import { CONVERSIONS } from "../../../constants";
@@ -41,7 +42,7 @@ export const PlatePriceContent = () => {
     if (!selectedSheet) return;
 
     const newIngredient: Ingredient = {
-      id: Date.now().toString(),
+      id: getNextId(),
       productId: "",
       priceId: "",
       quantity: 1,
