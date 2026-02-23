@@ -1,13 +1,26 @@
 import type { SyntheticEvent } from "react";
 import { UnitPicker, type Option } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
+import {
+  productId,
+  productName,
+  productPrices,
+  priceId,
+  priceDescription,
+  priceValue,
+  ingredientId,
+  ingredientProductId,
+  ingredientPriceId,
+  ingredientQuantity,
+  ingredientUnit,
+} from "../store";
 import { FieldBlock } from "../../../design_system/FieldBlock";
 import { useI18n } from "../../../i18n/useI18n";
 
 type IngredientCardsMobileProps = {
   ingredients: Ingredient[];
   products: Product[];
-  onChange: (id: string, field: keyof Ingredient, value: string | number) => void;
+  onChange: (id: string, field: "productId" | "priceId" | "quantity" | "unit", value: string | number) => void;
   onDelete: (id: string) => void;
   onUnitChange: (
     id: string,
@@ -33,22 +46,22 @@ export const IngredientCardsMobile = ({
     <div className="w-full sm:hidden space-y-3">
       {ingredients.map((ingredient) => (
         <div
-          key={ingredient.id}
+          key={ingredientId(ingredient)}
           className="border border-grape-200 rounded-lg bg-white shadow-sm"
         >
           <div className="grid grid-cols-1 gap-2 p-3">
             <FieldBlock label={t("tableProduct")}>
               <select
                 className="border border-grape-200 rounded p-2 w-full text-sm"
-                value={ingredient.productId}
+                value={ingredientProductId(ingredient)}
                 onChange={(e) =>
-                  onChange(ingredient.id, "productId", e.target.value)
+                  onChange(ingredientId(ingredient), "productId", e.target.value)
                 }
               >
                 <option value="">{t("selectProduct")}</option>
                 {products.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
+                  <option key={productId(product)} value={productId(product)}>
+                    {productName(product)}
                   </option>
                 ))}
               </select>
@@ -57,20 +70,24 @@ export const IngredientCardsMobile = ({
             <FieldBlock label={t("tablePriceDescription")}>
               <select
                 className="border border-grape-200 rounded p-2 w-full text-sm"
-                value={ingredient.priceId}
+                value={ingredientPriceId(ingredient)}
                 onChange={(e) =>
-                  onChange(ingredient.id, "priceId", e.target.value)
+                  onChange(ingredientId(ingredient), "priceId", e.target.value)
                 }
-                disabled={!ingredient.productId}
+                disabled={!ingredientProductId(ingredient)}
               >
                 <option value="">{t("selectOption")}</option>
-                {products
-                  .find((product) => product.id === ingredient.productId)
-                  ?.prices.map((price) => (
-                    <option key={price.id} value={price.id}>
-                      {price.description} — {t("currencyPrefix")} {price.value}
+                {(() => {
+                  const selectedProduct = products.find(
+                    (product) => productId(product) === ingredientProductId(ingredient)
+                  );
+                  if (!selectedProduct) return null;
+                  return productPrices(selectedProduct).map((price) => (
+                    <option key={priceId(price)} value={priceId(price)}>
+                      {priceDescription(price)} - {t("currencyPrefix")} {priceValue(price)}
                     </option>
-                  ))}
+                  ));
+                })()}
               </select>
             </FieldBlock>
           </div>
@@ -80,11 +97,11 @@ export const IngredientCardsMobile = ({
               <input
                 type="number"
                 className="border border-grape-200 rounded p-2 w-full text-sm"
-                value={ingredient.quantity}
+                value={ingredientQuantity(ingredient)}
                 onChange={(e) => {
                   const val = e.target.value;
                   onChange(
-                    ingredient.id,
+                    ingredientId(ingredient),
                     "quantity",
                     val === "" ? "" : Number(val)
                   );
@@ -94,10 +111,10 @@ export const IngredientCardsMobile = ({
             <FieldBlock label={t("tableUnit")} className="flex flex-col items-center">
               <UnitPicker
                 abbvVersion
-                unitState={ingredient.unit}
-                category={getUnitCategory(ingredient.productId)}
+                unitState={ingredientUnit(ingredient)}
+                category={getUnitCategory(ingredientProductId(ingredient))}
                 handleUnitChange={(e, value) =>
-                  onUnitChange(ingredient.id, e, value)
+                  onUnitChange(ingredientId(ingredient), e, value)
                 }
               />
             </FieldBlock>
@@ -114,7 +131,7 @@ export const IngredientCardsMobile = ({
             <FieldBlock label={t("tableActions")} className="flex flex-col items-center">
               <button
                 className="bg-ink hover:bg-black text-white px-2 py-1 rounded text-xs w-full"
-                onClick={() => onDelete(ingredient.id)}
+                onClick={() => onDelete(ingredientId(ingredient))}
               >
                 {t("delete")}
               </button>

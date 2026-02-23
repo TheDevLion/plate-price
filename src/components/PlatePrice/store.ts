@@ -4,33 +4,50 @@ import { STORE_APP_KEYS } from "../../constants";
 import { loadFromStorage, saveToStorage } from "../../core/storage";
 
 //----------------      Basic Types
-export type TechnicalDatasheetRecord = {
-    id: string,
-    name: string
-}
+export type TechnicalDatasheetRecord = [string, string];
+export const makeReceipt = (id: string, name: string): TechnicalDatasheetRecord => [id, name];
+export const receiptId = (receipt: TechnicalDatasheetRecord) => receipt[0];
+export const receiptName = (receipt: TechnicalDatasheetRecord) => receipt[1];
 
-export type Product = {
-  id: string;
-  name: string;
-  quantity: number | "";
-  unit: string;
-  prices: ProductPrice[];
-};
+export type ProductPrice = [string, string, number | ""];
+export const makePrice = (id: string, description: string, value: number | ""): ProductPrice => [
+  id,
+  description,
+  value,
+];
+export const priceId = (price: ProductPrice) => price[0];
+export const priceDescription = (price: ProductPrice) => price[1];
+export const priceValue = (price: ProductPrice) => price[2];
 
-export type ProductPrice = {
-    id: string;
-    description: string;
-    value: number | "";
-}
+export type Product = [string, string, number | "", string, ProductPrice[]];
+export const makeProduct = (
+  id: string,
+  name: string,
+  quantity: number | "",
+  unit: string,
+  prices: ProductPrice[]
+): Product => [id, name, quantity, unit, prices];
+export const productId = (product: Product) => product[0];
+export const productName = (product: Product) => product[1];
+export const productQuantity = (product: Product) => product[2];
+export const productUnit = (product: Product) => product[3];
+export const productPrices = (product: Product) => product[4];
 
-export type Ingredient = {
-  id: string;
-  productId: string;
-  priceId: string;
-  quantity: number | "";
-  unit: string;
-  datasheetId: string;
-};
+export type Ingredient = [string, string, string, number | "", string, string];
+export const makeIngredient = (
+  id: string,
+  productIdValue: string,
+  priceIdValue: string,
+  quantity: number | "",
+  unit: string,
+  datasheetId: string
+): Ingredient => [id, productIdValue, priceIdValue, quantity, unit, datasheetId];
+export const ingredientId = (ingredient: Ingredient) => ingredient[0];
+export const ingredientProductId = (ingredient: Ingredient) => ingredient[1];
+export const ingredientPriceId = (ingredient: Ingredient) => ingredient[2];
+export const ingredientQuantity = (ingredient: Ingredient) => ingredient[3];
+export const ingredientUnit = (ingredient: Ingredient) => ingredient[4];
+export const ingredientDatasheetId = (ingredient: Ingredient) => ingredient[5];
 
 
 //----------------      Store Types
@@ -55,6 +72,9 @@ export type TechnicalDatasheetActions = {
 
 export type TechnicalDatasheetStore = TechnicalDatasheetState & TechnicalDatasheetActions;
 
+const decodeReceipts = (raw: unknown): TechnicalDatasheetRecord[] =>
+  Array.isArray(raw) ? (raw as TechnicalDatasheetRecord[]) : [];
+
 
 //----------------      Store
 export const initialStore: TechnicalDatasheetState = {
@@ -76,7 +96,7 @@ export const useTechnicalDatasheetStore = create<TechnicalDatasheetStore>()((set
     setIngredients: (ingredients: Ingredient[]) => set((state) => ({...state, ingredients })),
     loadDatasheets: () => set((state) => ({
         ...state,
-        datasheets: loadFromStorage<TechnicalDatasheetRecord[]>(STORE_APP_KEYS.receipts, []),
+        datasheets: decodeReceipts(loadFromStorage<unknown>(STORE_APP_KEYS.receipts, [])),
     })),
     loadProducts: () => set((state) => ({
         ...state,

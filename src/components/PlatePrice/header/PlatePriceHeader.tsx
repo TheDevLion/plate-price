@@ -1,6 +1,7 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useState } from "react";
-import { useDatasheets, useSelectedSheet, type TechnicalDatasheetRecord } from "../store";
+import { useDatasheets, useSelectedSheet, makeReceipt, receiptId, receiptName } from "../store";
+import { getNextId } from "../../../helpers/idCounter";
 import Inventory2 from "@mui/icons-material/Inventory2";
 import { ProductsModal } from "../product/ProductModal";
 import { ShareButton } from "../../../design_system/ShareButton";
@@ -36,25 +37,25 @@ export const PlatePriceHeader = () => {
   const handleAddReceipt = (value: string) => {    
     if (!value) return;
 
-    const newReceipt: TechnicalDatasheetRecord = { id: Date.now().toString(), name: value };
+    const newReceipt = makeReceipt(getNextId(), value);
     const newReceiptsState = [...datasheets, newReceipt]
 
     setDatasheets(newReceiptsState);
-    setSelectedSheet(newReceipt.id)
+    setSelectedSheet(newReceipt[0])
     handleCloseConfirmDialog();
   };
 
   const handleRename = (value: string) => {
     if (!selectedSheet) return;
 
-    const currentDatasheetObj = datasheets.find(d => d.id === selectedSheet)
+    const currentDatasheetObj = datasheets.find(d => receiptId(d) === selectedSheet)
     if (!currentDatasheetObj) return;
 
     if (!value) return;
 
-    currentDatasheetObj.name = value
-    const updatedDatasheets = datasheets.filter(d => d.id !== currentDatasheetObj?.id)
-    updatedDatasheets.push(currentDatasheetObj)
+    const updatedDatasheets = datasheets.map((d) =>
+      receiptId(d) === receiptId(currentDatasheetObj) ? makeReceipt(receiptId(d), value) : d
+    )
 
     setDatasheets(updatedDatasheets);
     handleCloseConfirmDialog();
@@ -63,12 +64,12 @@ export const PlatePriceHeader = () => {
   const handleDelete = (value: string) => {
     if (!selectedSheet) return;
 
-    const currentDatasheetObj = datasheets.find(d => d.id === selectedSheet)
+    const currentDatasheetObj = datasheets.find(d => receiptId(d) === selectedSheet)
     if (!currentDatasheetObj) return;
 
     if (!value) return;
 
-    const updatedDatasheets = datasheets.filter(d => d.id !== currentDatasheetObj?.id)    
+    const updatedDatasheets = datasheets.filter(d => receiptId(d) !== receiptId(currentDatasheetObj))    
     setDatasheets(updatedDatasheets);
 
     handleCloseConfirmDialog();
@@ -101,8 +102,8 @@ export const PlatePriceHeader = () => {
         >
           <option value="">{t("selectReceiptPlaceholder")}</option>
           {datasheets.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
+            <option key={receiptId(r)} value={receiptId(r)}>
+              {receiptName(r)}
             </option>
           ))}
         </select>

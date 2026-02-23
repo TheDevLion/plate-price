@@ -1,5 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
-import { useIngredients, useProducts, useSelectedSheet, type Ingredient } from "../store";
+import {
+  useIngredients,
+  useProducts,
+  useSelectedSheet,
+  type Ingredient,
+  productId,
+  productPrices,
+  productQuantity,
+  productUnit,
+  priceId,
+  priceValue,
+  makeIngredient,
+  ingredientDatasheetId,
+  ingredientId,
+  ingredientPriceId,
+  ingredientProductId,
+  ingredientQuantity,
+  ingredientUnit,
+} from "../store";
+import { getNextId } from "../../../helpers/idCounter";
 import type { Option } from "../../../core/UnitPicker";
 import { convertValue } from "../../../helpers/convert_values";
 import { CONVERSIONS } from "../../../constants";
@@ -23,14 +42,14 @@ export const PlatePriceContent = () => {
 
   useEffect(() => {
     if (ingredients) {
-      const receiptIngredients = ingredients.filter(i => i.datasheetId === selectedSheet)
+      const receiptIngredients = ingredients.filter(i => ingredientDatasheetId(i) === selectedSheet)
       setIngredientsToShow(receiptIngredients);
     }
   }, [selectedSheet])
 
   const persistIngredients = (newIngredients: Ingredient[]) => {
     setIngredientsToShow(newIngredients);
-    const otherReceiptsIngredients = ingredients.filter(i => i.datasheetId !== selectedSheet);
+    const otherReceiptsIngredients = ingredients.filter(i => ingredientDatasheetId(i) !== selectedSheet);
 
     const newTotalIngredients = [...otherReceiptsIngredients, ...newIngredients]
     saveIngredients(newTotalIngredients);
@@ -40,58 +59,105 @@ export const PlatePriceContent = () => {
   const handleAddIngredient = () => {
     if (!selectedSheet) return;
 
-    const newIngredient: Ingredient = {
-      id: Date.now().toString(),
-      productId: "",
-      priceId: "",
-      quantity: 1,
-      unit: "",
-      datasheetId: selectedSheet,
-    };
+    const newIngredient: Ingredient = makeIngredient(
+      getNextId(),
+      "",
+      "",
+      1,
+      "",
+      selectedSheet
+    );
     persistIngredients([newIngredient, ...ingredientsToShow]);
   };
 
   const handleDeleteIngredient = (id: string) => {
-    persistIngredients(ingredientsToShow.filter((i) => i.id !== id));
+    persistIngredients(ingredientsToShow.filter((i) => ingredientId(i) !== id));
   };
 
   const handleChange = (
     id: string,
-    field: keyof Ingredient,
+    field: "productId" | "priceId" | "quantity" | "unit",
     value: string | number
   ) => {
-    const updated = ingredientsToShow.map((i) =>
-      i.id === id ? { ...i, [field]: value } : i
-    );
+    const updated = ingredientsToShow.map((i) => {
+      if (ingredientId(i) !== id) return i;
+      if (field === "productId") {
+        return makeIngredient(
+          ingredientId(i),
+          String(value),
+          ingredientPriceId(i),
+          ingredientQuantity(i),
+          ingredientUnit(i),
+          ingredientDatasheetId(i)
+        );
+      }
+      if (field === "priceId") {
+        return makeIngredient(
+          ingredientId(i),
+          ingredientProductId(i),
+          String(value),
+          ingredientQuantity(i),
+          ingredientUnit(i),
+          ingredientDatasheetId(i)
+        );
+      }
+      if (field === "quantity") {
+        return makeIngredient(
+          ingredientId(i),
+          ingredientProductId(i),
+          ingredientPriceId(i),
+          value as number | "",
+          ingredientUnit(i),
+          ingredientDatasheetId(i)
+        );
+      }
+      return makeIngredient(
+        ingredientId(i),
+        ingredientProductId(i),
+        ingredientPriceId(i),
+        ingredientQuantity(i),
+        String(value),
+        ingredientDatasheetId(i)
+      );
+    });
     persistIngredients(updated);
   };
 
   const getProductPrice = (ing: Ingredient) => {
-    const product = products.find((p) => p.id === ing.productId);
-    const price = product?.prices.find((pr) => pr.id === ing.priceId);
+    const product = products.find((p) => productId(p) === ingredientProductId(ing));
+    const price = product
+      ? productPrices(product).find((pr) => priceId(pr) === ingredientPriceId(ing))
+      : undefined;
 
-    const inputValue = ing.quantity
-    const inputUnit = ing.unit
-    const outputUnit = product?.unit
+    const inputValue = ingredientQuantity(ing)
+    const inputUnit = ingredientUnit(ing)
+    const outputUnit = product ? productUnit(product) : undefined
     const parcialResult = convertValue(inputValue, inputUnit, outputUnit ?? "")
 
-    if (parcialResult && product?.quantity)
-      return price && price.value && ing.quantity ? price.value * (Number(parcialResult) / product?.quantity) : 0;
+    if (parcialResult && product) {
+      const qty = Number(productQuantity(product));
+      if (!qty) return 0;
+      const priceNum = price ? Number(priceValue(price)) : 0;
+      const ingQty = Number(ingredientQuantity(ing));
+      return price && priceNum && ingQty
+        ? priceNum * (Number(parcialResult) / qty)
+        : 0;
+    }
   };
 
-  const handleUnitChange = (productId: string, _: React.SyntheticEvent<Element, Event>, value: Option | null) => {
+  const handleUnitChange = (productIdValue: string, _: React.SyntheticEvent<Element, Event>, value: Option | null) => {
         if (!value) return;
         const unit = value.abbv;
-        handleChange(productId, "unit", unit);
+        handleChange(productIdValue, "unit", unit);
     };
 
-  const getUnitCategory = (productId: string) => {
-    if (!productId) return undefined;
+  const getUnitCategory = (productIdValue: string) => {
+    if (!productIdValue) return undefined;
 
-    const product = products.find(p => p.id === productId);
+    const product = products.find(p => productId(p) === productIdValue);
     if (!product) return undefined;
 
-    const conversion = CONVERSIONS.find(c => c.abbv === product.unit);
+    const conversion = CONVERSIONS.find(c => c.abbv === productUnit(product));
     return conversion?.category;
 };
 

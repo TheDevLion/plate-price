@@ -1,12 +1,25 @@
 import type { SyntheticEvent } from "react";
 import { UnitPicker, type Option } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
+import {
+  productId,
+  productName,
+  productPrices,
+  priceId,
+  priceDescription,
+  priceValue,
+  ingredientId,
+  ingredientProductId,
+  ingredientPriceId,
+  ingredientQuantity,
+  ingredientUnit,
+} from "../store";
 import { useI18n } from "../../../i18n/useI18n";
 
 type IngredientTableDesktopProps = {
   ingredients: Ingredient[];
   products: Product[];
-  onChange: (id: string, field: keyof Ingredient, value: string | number) => void;
+  onChange: (id: string, field: "productId" | "priceId" | "quantity" | "unit", value: string | number) => void;
   onDelete: (id: string) => void;
   onUnitChange: (
     id: string,
@@ -55,19 +68,19 @@ export const IngredientTableDesktop = ({
         </thead>
         <tbody>
           {ingredients.map((ingredient) => (
-            <tr key={ingredient.id}>
+            <tr key={ingredientId(ingredient)}>
               <td className="border border-grape-200 p-2 truncate">
                 <select
                   className="border border-grape-200 rounded p-1 w-full min-w-0 truncate"
-                  value={ingredient.productId}
+                  value={ingredientProductId(ingredient)}
                   onChange={(e) =>
-                    onChange(ingredient.id, "productId", e.target.value)
+                    onChange(ingredientId(ingredient), "productId", e.target.value)
                   }
                 >
                   <option value="">{t("selectProduct")}</option>
                   {products.map((product) => (
-                    <option key={product.id} value={product.id}>
-                      {product.name}
+                    <option key={productId(product)} value={productId(product)}>
+                      {productName(product)}
                     </option>
                   ))}
                 </select>
@@ -75,31 +88,35 @@ export const IngredientTableDesktop = ({
               <td className="border border-grape-200 p-2 truncate">
                 <select
                   className="border border-grape-200 rounded p-1 w-full min-w-0 truncate"
-                  value={ingredient.priceId}
+                  value={ingredientPriceId(ingredient)}
                   onChange={(e) =>
-                    onChange(ingredient.id, "priceId", e.target.value)
+                    onChange(ingredientId(ingredient), "priceId", e.target.value)
                   }
-                  disabled={!ingredient.productId}
+                  disabled={!ingredientProductId(ingredient)}
                 >
                   <option value="">{t("selectOption")}</option>
-                  {products
-                    .find((product) => product.id === ingredient.productId)
-                    ?.prices.map((price) => (
-                      <option key={price.id} value={price.id}>
-                        {price.description} — {t("currencyPrefix")} {price.value}
+                  {(() => {
+                    const selectedProduct = products.find(
+                      (product) => productId(product) === ingredientProductId(ingredient)
+                    );
+                    if (!selectedProduct) return null;
+                    return productPrices(selectedProduct).map((price) => (
+                      <option key={priceId(price)} value={priceId(price)}>
+                        {priceDescription(price)} - {t("currencyPrefix")} {priceValue(price)}
                       </option>
-                    ))}
+                    ));
+                  })()}
                 </select>
               </td>
               <td className="border border-grape-200 p-2 truncate">
                 <input
                   type="number"
                   className="border border-grape-200 rounded p-1 w-full min-w-0"
-                  value={ingredient.quantity}
+                  value={ingredientQuantity(ingredient)}
                   onChange={(e) => {
                     const val = e.target.value;
                     onChange(
-                      ingredient.id,
+                      ingredientId(ingredient),
                       "quantity",
                       val === "" ? "" : Number(val)
                     );
@@ -109,10 +126,10 @@ export const IngredientTableDesktop = ({
               <td className="border border-grape-200 p-2 truncate">
                 <UnitPicker
                   abbvVersion
-                  unitState={ingredient.unit}
-                  category={getUnitCategory(ingredient.productId)}
+                  unitState={ingredientUnit(ingredient)}
+                  category={getUnitCategory(ingredientProductId(ingredient))}
                   handleUnitChange={(e, value) =>
-                    onUnitChange(ingredient.id, e, value)
+                    onUnitChange(ingredientId(ingredient), e, value)
                   }
                 />
               </td>
@@ -127,7 +144,7 @@ export const IngredientTableDesktop = ({
               <td className="border border-grape-200 p-2 text-center truncate">
                 <button
                   className="bg-ink hover:bg-black text-white px-2 py-1 rounded"
-                  onClick={() => onDelete(ingredient.id)}
+                  onClick={() => onDelete(ingredientId(ingredient))}
                 >
                   {t("delete")}
                 </button>
