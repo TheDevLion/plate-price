@@ -4,10 +4,10 @@ import { STORE_APP_KEYS } from "../../constants";
 import { loadFromStorage, saveToStorage } from "../../core/storage";
 
 //----------------      Basic Types
-export type TechnicalDatasheetRecord = {
-    id: string,
-    name: string
-}
+export type TechnicalDatasheetRecord = [string, string];
+export const makeReceipt = (id: string, name: string): TechnicalDatasheetRecord => [id, name];
+export const receiptId = (receipt: TechnicalDatasheetRecord) => receipt[0];
+export const receiptName = (receipt: TechnicalDatasheetRecord) => receipt[1];
 
 export type Product = {
   id: string;
@@ -55,6 +55,9 @@ export type TechnicalDatasheetActions = {
 
 export type TechnicalDatasheetStore = TechnicalDatasheetState & TechnicalDatasheetActions;
 
+const decodeReceipts = (raw: unknown): TechnicalDatasheetRecord[] =>
+  Array.isArray(raw) ? (raw as TechnicalDatasheetRecord[]) : [];
+
 
 //----------------      Store
 export const initialStore: TechnicalDatasheetState = {
@@ -76,7 +79,7 @@ export const useTechnicalDatasheetStore = create<TechnicalDatasheetStore>()((set
     setIngredients: (ingredients: Ingredient[]) => set((state) => ({...state, ingredients })),
     loadDatasheets: () => set((state) => ({
         ...state,
-        datasheets: loadFromStorage<TechnicalDatasheetRecord[]>(STORE_APP_KEYS.receipts, []),
+        datasheets: decodeReceipts(loadFromStorage<unknown>(STORE_APP_KEYS.receipts, [])),
     })),
     loadProducts: () => set((state) => ({
         ...state,

@@ -13,3 +13,10 @@ IDs across the app are now generated using a single global auto-increment counte
 - Base62 codec: `src/helpers/base62.ts`
 
 ## 2. JSON structure of stored data keys
+
+### 2.1 Overview
+Receipts are now stored as positional arrays instead of objects to reduce size and make the schema explicit.
+
+### Receipts format (v2)
+- Each receipt is stored as `[id, name]`
+- The in-memory type is `TechnicalDatasheetRecord = [string, string]`
