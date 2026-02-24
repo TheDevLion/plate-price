@@ -32,3 +32,5 @@ Receipts, products (including product prices) and ingredients  are now stored as
 - Each ingredient is stored as `[id, productId, priceId, quantity, unit, datasheetId]`
 - In-memory type: `Ingredient = [string, string, string, number | \"\", string, string]`
 
+
+## 3. 
