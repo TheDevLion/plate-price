@@ -5,9 +5,9 @@ import { loadFromStorage, saveToStorage } from "../../core/storage";
 
 //----------------      Basic Types
 export type TechnicalDatasheetRecord = [string, string];
-export const makeReceipt = (id: string, name: string): TechnicalDatasheetRecord => [id, name];
-export const receiptId = (receipt: TechnicalDatasheetRecord) => receipt[0];
-export const receiptName = (receipt: TechnicalDatasheetRecord) => receipt[1];
+export const makeRecipe = (id: string, name: string): TechnicalDatasheetRecord => [id, name];
+export const recipeId = (recipe: TechnicalDatasheetRecord) => recipe[0];
+export const recipeName = (recipe: TechnicalDatasheetRecord) => recipe[1];
 
 export type ProductPrice = [string, string, number | ""];
 export const makePrice = (id: string, description: string, value: number | ""): ProductPrice => [
@@ -72,7 +72,7 @@ export type TechnicalDatasheetActions = {
 
 export type TechnicalDatasheetStore = TechnicalDatasheetState & TechnicalDatasheetActions;
 
-const decodeReceipts = (raw: unknown): TechnicalDatasheetRecord[] =>
+const decodeRecipes = (raw: unknown): TechnicalDatasheetRecord[] =>
   Array.isArray(raw) ? (raw as TechnicalDatasheetRecord[]) : [];
 
 
@@ -89,14 +89,14 @@ export const useTechnicalDatasheetStore = create<TechnicalDatasheetStore>()((set
     setSelectedSheet: (sheetId?: string) => set((state) => ({...state, selectedSheet: sheetId})),
     setDatasheets: (datasheets: TechnicalDatasheetRecord[]) => set((state) => {
         const newState = {...state, datasheets }
-        saveToStorage(STORE_APP_KEYS.receipts, datasheets);
+        saveToStorage(STORE_APP_KEYS.recipes, datasheets);
         return newState
     }),
     setProducts: (products: Product[]) => set((state) => ({...state, products })),
     setIngredients: (ingredients: Ingredient[]) => set((state) => ({...state, ingredients })),
     loadDatasheets: () => set((state) => ({
         ...state,
-        datasheets: decodeReceipts(loadFromStorage<unknown>(STORE_APP_KEYS.receipts, [])),
+        datasheets: decodeRecipes(loadFromStorage<unknown>(STORE_APP_KEYS.recipes, [])),
     })),
     loadProducts: () => set((state) => ({
         ...state,

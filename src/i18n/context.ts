@@ -6,13 +6,13 @@ export const translations = {
   en: {
     appTitle: "Plate Price",
     headerTitle: "Technical Datasheet",
-    selectReceiptPlaceholder: "-- Select Receipt --",
-    addReceipt: "Add receipt",
-    editReceipt: "Edit receipt",
-    deleteReceipt: "Delete receipt",
-    confirmAddTitle: "Enter the name for the new receipt:",
-    confirmEditTitle: "Enter the new name for the receipt:",
-    confirmDeleteTitle: "Are you sure you want to delete this receipt?",
+    selectRecipePlaceholder: "-- Select Recipe --",
+    addRecipe: "Add recipe",
+    editRecipe: "Edit recipe",
+    deleteRecipe: "Delete recipe",
+    confirmAddTitle: "Enter the name for the new recipe:",
+    confirmEditTitle: "Enter the new name for the recipe:",
+    confirmDeleteTitle: "Are you sure you want to delete this recipe?",
     shareTooltip: "Share this datasheet",
     share: "Share",
     copied: "Copied!",
@@ -50,10 +50,10 @@ export const translations = {
   pt: {
     appTitle: "Plate Price",
     headerTitle: "Ficha Técnica",
-    selectReceiptPlaceholder: "-- Selecionar ficha --",
-    addReceipt: "Adicionar ficha",
-    editReceipt: "Editar ficha",
-    deleteReceipt: "Excluir ficha",
+    selectRecipePlaceholder: "-- Selecionar ficha --",
+    addRecipe: "Adicionar ficha",
+    editRecipe: "Editar ficha",
+    deleteRecipe: "Excluir ficha",
     confirmAddTitle: "Digite o nome da nova ficha:",
     confirmEditTitle: "Digite o novo nome da ficha:",
     confirmDeleteTitle: "Tem certeza que deseja excluir esta ficha ?",
@@ -112,3 +112,4 @@ export const getInitialLanguage = (): Language => {
   const browserLanguage = window.navigator.language.toLowerCase();
   return browserLanguage.startsWith("pt") ? "pt" : "en";
 };
+

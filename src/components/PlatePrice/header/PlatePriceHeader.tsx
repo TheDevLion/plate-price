@@ -1,6 +1,6 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useState } from "react";
-import { useDatasheets, useSelectedSheet, makeReceipt, receiptId, receiptName } from "../store";
+import { useDatasheets, useSelectedSheet, makeRecipe, recipeId, recipeName } from "../store";
 import { getNextId } from "../../../helpers/idCounter";
 import Inventory2 from "@mui/icons-material/Inventory2";
 import { ProductsModal } from "../product/ProductModal";
@@ -14,16 +14,16 @@ export const PlatePriceHeader = () => {
   const {datasheets, setDatasheets} = useDatasheets()
 
   const DIALOG_ACTIONS = {
-    ADD_RECEIPT: {
-      id: "ADD_RECEIPT",
+    ADD_RECIPE: {
+      id: "ADD_RECIPE",
       title: t("confirmAddTitle"),
     },
-    EDIT_RECEIPT: {
-      id: "EDIT_RECEIPT",
+    EDIT_RECIPE: {
+      id: "EDIT_RECIPE",
       title: t("confirmEditTitle"),
     },
-    DELETE_RECEIPT: {
-      id: "DELETE_RECEIPT",
+    DELETE_RECIPE: {
+      id: "DELETE_RECIPE",
       title: t("confirmDeleteTitle"),
     },
   };
@@ -34,27 +34,27 @@ export const PlatePriceHeader = () => {
   const handleOpenConfirmDialog = (type: string) => setOpenConfirmDialog(type);
   const handleCloseConfirmDialog = () => setOpenConfirmDialog(undefined);
 
-  const handleAddReceipt = (value: string) => {    
+  const handleAddRecipe = (value: string) => {
     if (!value) return;
 
-    const newReceipt = makeReceipt(getNextId(), value);
-    const newReceiptsState = [...datasheets, newReceipt]
+    const newRecipe = makeRecipe(getNextId(), value);
+    const newRecipesState = [...datasheets, newRecipe]
 
-    setDatasheets(newReceiptsState);
-    setSelectedSheet(newReceipt[0])
+    setDatasheets(newRecipesState);
+    setSelectedSheet(newRecipe[0])
     handleCloseConfirmDialog();
   };
 
   const handleRename = (value: string) => {
     if (!selectedSheet) return;
 
-    const currentDatasheetObj = datasheets.find(d => receiptId(d) === selectedSheet)
+    const currentDatasheetObj = datasheets.find(d => recipeId(d) === selectedSheet)
     if (!currentDatasheetObj) return;
 
     if (!value) return;
 
     const updatedDatasheets = datasheets.map((d) =>
-      receiptId(d) === receiptId(currentDatasheetObj) ? makeReceipt(receiptId(d), value) : d
+      recipeId(d) === recipeId(currentDatasheetObj) ? makeRecipe(recipeId(d), value) : d
     )
 
     setDatasheets(updatedDatasheets);
@@ -64,12 +64,12 @@ export const PlatePriceHeader = () => {
   const handleDelete = (value: string) => {
     if (!selectedSheet) return;
 
-    const currentDatasheetObj = datasheets.find(d => receiptId(d) === selectedSheet)
+    const currentDatasheetObj = datasheets.find(d => recipeId(d) === selectedSheet)
     if (!currentDatasheetObj) return;
 
     if (!value) return;
 
-    const updatedDatasheets = datasheets.filter(d => receiptId(d) !== receiptId(currentDatasheetObj))    
+    const updatedDatasheets = datasheets.filter(d => recipeId(d) !== recipeId(currentDatasheetObj))
     setDatasheets(updatedDatasheets);
 
     handleCloseConfirmDialog();
@@ -80,9 +80,9 @@ export const PlatePriceHeader = () => {
   };
 
   const CONFIRM_HANDLERS = {
-    [DIALOG_ACTIONS.ADD_RECEIPT.id]: handleAddReceipt,
-    [DIALOG_ACTIONS.EDIT_RECEIPT.id]: handleRename,
-    [DIALOG_ACTIONS.DELETE_RECEIPT.id]: handleDelete,
+    [DIALOG_ACTIONS.ADD_RECIPE.id]: handleAddRecipe,
+    [DIALOG_ACTIONS.EDIT_RECIPE.id]: handleRename,
+    [DIALOG_ACTIONS.DELETE_RECIPE.id]: handleDelete,
   } as const;
 
 
@@ -100,10 +100,10 @@ export const PlatePriceHeader = () => {
           onChange={(e) => handleSelect(e.target.value)}
           className="w-full sm:w-auto border border-grape-200 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-grape-400"
         >
-          <option value="">{t("selectReceiptPlaceholder")}</option>
+          <option value="">{t("selectRecipePlaceholder")}</option>
           {datasheets.map((r) => (
-            <option key={receiptId(r)} value={receiptId(r)}>
-              {receiptName(r)}
+            <option key={recipeId(r)} value={recipeId(r)}>
+              {recipeName(r)}
             </option>
           ))}
         </select>
@@ -112,15 +112,15 @@ export const PlatePriceHeader = () => {
           <>
             <button
               className="bg-ink hover:bg-black text-white p-2 rounded transition"
-              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.EDIT_RECEIPT.id)}
-              aria-label={t("editReceipt")}
+              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.EDIT_RECIPE.id)}
+              aria-label={t("editRecipe")}
             >
               <Edit fontSize="small" />
             </button>
             <button
               className="bg-ink hover:bg-black text-white p-2 rounded transition"
-              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.DELETE_RECEIPT.id)}
-              aria-label={t("deleteReceipt")}
+              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.DELETE_RECIPE.id)}
+              aria-label={t("deleteRecipe")}
             >
               <Delete fontSize="small" />
             </button>
@@ -129,8 +129,8 @@ export const PlatePriceHeader = () => {
 
         <button
           className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-1 sm:m-2"
-          onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECEIPT.id)}
-          aria-label={t("addReceipt")}
+          onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECIPE.id)}
+          aria-label={t("addRecipe")}
         >
           <Add />
         </button>
@@ -153,7 +153,7 @@ export const PlatePriceHeader = () => {
         title={DIALOG_ACTIONS[openConfirmDialog as keyof typeof DIALOG_ACTIONS]?.title || ''}
         onClose={handleCloseConfirmDialog} 
         onConfirm={CONFIRM_HANDLERS[openConfirmDialog as keyof typeof CONFIRM_HANDLERS] || (() => {})} 
-        noText={openConfirmDialog === DIALOG_ACTIONS.DELETE_RECEIPT.id}
+        noText={openConfirmDialog === DIALOG_ACTIONS.DELETE_RECIPE.id}
       />
     </header>
   );

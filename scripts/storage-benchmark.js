@@ -232,12 +232,12 @@ const toBase62 = (value) => {
 };
 
 const makePayloadLegacy = ({ sheets, products, ingredients, prices = 1 }) => {
-  const receipts = [];
+  const recipes = [];
   const prods = [];
   const ings = [];
 
   for (let i = 0; i < sheets; i++) {
-    receipts.push({
+    recipes.push({
       id: String(1700000000000 + i),
       name: datasheetNames[i % datasheetNames.length],
     });
@@ -273,7 +273,7 @@ const makePayloadLegacy = ({ sheets, products, ingredients, prices = 1 }) => {
     const prod = prods[i % Math.max(1, prods.length)];
     const productId = prod?.id ?? "1700002000000";
     const priceId = prod?.prices?.[0]?.id ?? "1700001000000";
-    const datasheetId = receipts[i % Math.max(1, receipts.length)]?.id ?? "1700000000000";
+    const datasheetId = recipes[i % Math.max(1, recipes.length)]?.id ?? "1700000000000";
     const category = unitCategory(prod?.unit ?? "kg");
     const qtyPool = ingredientQuantities[category];
     const quantity = qtyPool[i % qtyPool.length];
@@ -292,7 +292,7 @@ const makePayloadLegacy = ({ sheets, products, ingredients, prices = 1 }) => {
     v: 1,
     t: 1700004000000,
     data: {
-      receipts,
+      recipes,
       products: prods,
       ingredients: ings,
     },
@@ -300,13 +300,13 @@ const makePayloadLegacy = ({ sheets, products, ingredients, prices = 1 }) => {
 };
 
 const makePayloadOptimized = ({ sheets, products, ingredients, prices = 1 }) => {
-  const receipts = [];
+  const recipes = [];
   const prods = [];
   const ings = [];
 
   for (let i = 0; i < sheets; i++) {
-    const receiptId = toBase62(i + 1);
-    receipts.push([receiptId, datasheetNames[i % datasheetNames.length]]);
+    const recipeId = toBase62(i + 1);
+    recipes.push([recipeId, datasheetNames[i % datasheetNames.length]]);
   }
 
   for (let i = 0; i < products; i++) {
@@ -338,8 +338,8 @@ const makePayloadOptimized = ({ sheets, products, ingredients, prices = 1 }) => 
     const productId = prod ? prod[0] : toBase62(10_000);
     const firstPrice = prod && prod[4] && prod[4][0] ? prod[4][0] : null;
     const priceId = firstPrice ? firstPrice[0] : toBase62(100_000);
-    const receipt = receipts[i % Math.max(1, receipts.length)];
-    const datasheetId = receipt ? receipt[0] : toBase62(1);
+    const recipe = recipes[i % Math.max(1, recipes.length)];
+    const datasheetId = recipe ? recipe[0] : toBase62(1);
     const category = unitCategory(prod ? prod[3] : "kg");
     const qtyPool = ingredientQuantities[category];
     const quantity = qtyPool[i % qtyPool.length];
@@ -355,7 +355,7 @@ const makePayloadOptimized = ({ sheets, products, ingredients, prices = 1 }) => 
   }
 
   return {
-    receipts,
+    recipes,
     products: prods,
     ingredients: ings,
   };
@@ -388,7 +388,7 @@ const report = (label, jsonValue, compressedValue) => {
 
 const avgPerItem = (makePayload, kind, count) => {
   const make = (n) => {
-    if (kind === "receipts") return makePayload({ sheets: n, products: 0, ingredients: 0 });
+    if (kind === "recipes") return makePayload({ sheets: n, products: 0, ingredients: 0 });
     if (kind === "products") return makePayload({ sheets: 0, products: n, ingredients: 0 });
     return makePayload({ sheets: 0, products: 0, ingredients: n });
   };
@@ -400,11 +400,11 @@ const avgPerItem = (makePayload, kind, count) => {
 };
 
 const runSeparate = (makePayload) => {
-  const maxReceiptsJson = findMaxCount(
+  const maxRecipesJson = findMaxCount(
     (count) => makePayload({ sheets: count, products: 0, ingredients: 0 }),
     encoders.json
   );
-  const maxReceiptsLz = findMaxCount(
+  const maxRecipesLz = findMaxCount(
     (count) => makePayload({ sheets: count, products: 0, ingredients: 0 }),
     encoders.compressed
   );
@@ -428,7 +428,7 @@ const runSeparate = (makePayload) => {
   );
 
   console.log("\nSeparate (one collection at a time)");
-  report("receipts", maxReceiptsJson, maxReceiptsLz);
+  report("recipes", maxRecipesJson, maxRecipesLz);
   report("products", maxProductsJson, maxProductsLz);
   report("ingredients", maxIngredientsJson, maxIngredientsLz);
 };
@@ -443,20 +443,20 @@ const avgPerBlock = (makePayload, count) => {
 
 const runAverages = (makePayload) => {
   const N = 1000;
-  const receipts = avgPerItem(makePayload, "receipts", N);
+  const recipes = avgPerItem(makePayload, "recipes", N);
   const products = avgPerItem(makePayload, "products", N);
   const ingredients = avgPerItem(makePayload, "ingredients", N);
   const block = avgPerBlock(makePayload, N);
 
   console.log(`\nAverage chars per item (N=${N})`);
-  report("receipts", receipts.json.toFixed(2), receipts.lz.toFixed(2));
+  report("recipes", recipes.json.toFixed(2), recipes.lz.toFixed(2));
   report("products", products.json.toFixed(2), products.lz.toFixed(2));
   report("ingredients", ingredients.json.toFixed(2), ingredients.lz.toFixed(2));
 
   console.log(`\nAverage chars per block (1,1,1; N=${N})`);
   report("block", block.json.toFixed(2), block.lz.toFixed(2));
 
-  return { receipts, products, ingredients, block };
+  return { recipes, products, ingredients, block };
 };
 
 const runMixed = (makePayload) => {
@@ -494,10 +494,10 @@ const runEstimateVsActual = (makePayload, averages) => {
 
   const estimateJson =
     baseJson +
-    N * (averages.receipts.json + averages.products.json + averages.ingredients.json);
+    N * (averages.recipes.json + averages.products.json + averages.ingredients.json);
   const estimateLz =
     baseLz +
-    N * (averages.receipts.lz + averages.products.lz + averages.ingredients.lz);
+    N * (averages.recipes.lz + averages.products.lz + averages.ingredients.lz);
 
   const actualPayload = makePayload({ sheets: N, products: N, ingredients: N });
   const actualJson = encoders.json(actualPayload).length;

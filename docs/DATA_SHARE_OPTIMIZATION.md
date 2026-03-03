@@ -15,10 +15,10 @@ IDs across the app are now generated using a single global auto-increment counte
 ## 2. JSON structure of stored data keys
 
 ### Overview
-Receipts, products (including product prices) and ingredients  are now stored as positional arrays instead of objects to reduce size and make the schema explicit.
+Recipes, products (including product prices) and ingredients  are now stored as positional arrays instead of objects to reduce size and make the schema explicit.
 
-### Receipts format (v2)
-- Each receipt is stored as `[id, name]`
+### Recipes format (v2)
+- Each recipe is stored as `[id, name]`
 - The in-memory type is `TechnicalDatasheetRecord = [string, string]`
 
 ### Products format (v2)
@@ -58,7 +58,7 @@ Base62 conversion examples:
 - Decimal `3844` (`62 * 62`) -> Base62 `"100"`
 
 Why it matters for URL size:
-- IDs are repeated in all relationships (`receipt`, `product`, `price`, `ingredient` references).
+- IDs are repeated in all relationships (`recipe`, `product`, `price`, `ingredient` references).
 - Shorter IDs reduce raw JSON size and also improve compressed size.
 
 Before:
@@ -77,7 +77,7 @@ After:
 
 ---
 
-### Commit `b00baf4` - Receipts moved from object records to tuple records
+### Commit `b00baf4` - Recipes moved from object records to tuple records
 
 What changed:
 - `TechnicalDatasheetRecord` changed from object shape to fixed-position tuple.
@@ -112,7 +112,7 @@ After data example:
 ```
 
 Size/compression impact:
-- Removes repeated key names (`"id"`, `"name"`) for every receipt entry.
+- Removes repeated key names (`"id"`, `"name"`) for every recipe entry.
 
 ---
 
@@ -236,7 +236,7 @@ Current export flow (optimized):
 
 ```json
 {
-  "receipts": "...",
+  "recipes": "...",
   "products": "...",
   "ingredients": "..."
 }

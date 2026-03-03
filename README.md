@@ -3,7 +3,7 @@ Plate Price
 
 Description (EN)
 ---------------
-Plate Price is a single-page web app to manage technical datasheets, products, and ingredient costs. It lets you build receipts, assign product units, and calculate totals with a mobile-friendly layout.
+Plate Price is a single-page web app to manage technical datasheets, products, and ingredient costs. It lets you build recipes, assign product units, and calculate totals with a mobile-friendly layout.
 
 Descrição (PT)
 ---------------
@@ -58,3 +58,4 @@ Tecnologias (PT)
 - Material UI 7.3.5
 - Zustand 5.0.8
 - LZ-String 1.5.0
+

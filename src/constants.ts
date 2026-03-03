@@ -1,5 +1,5 @@
 export const STORE_APP_KEYS = {
-  receipts: "receipts",
+  recipes: "recipes",
   products: "products",
   ingredients: "ingredients"
 };
