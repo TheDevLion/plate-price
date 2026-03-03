@@ -42,16 +42,16 @@ export const PlatePriceContent = () => {
 
   useEffect(() => {
     if (ingredients) {
-      const receiptIngredients = ingredients.filter(i => ingredientDatasheetId(i) === selectedSheet)
-      setIngredientsToShow(receiptIngredients);
+      const recipeIngredients = ingredients.filter(i => ingredientDatasheetId(i) === selectedSheet)
+      setIngredientsToShow(recipeIngredients);
     }
   }, [selectedSheet])
 
   const persistIngredients = (newIngredients: Ingredient[]) => {
     setIngredientsToShow(newIngredients);
-    const otherReceiptsIngredients = ingredients.filter(i => ingredientDatasheetId(i) !== selectedSheet);
+    const otherRecipesIngredients = ingredients.filter(i => ingredientDatasheetId(i) !== selectedSheet);
 
-    const newTotalIngredients = [...otherReceiptsIngredients, ...newIngredients]
+    const newTotalIngredients = [...otherRecipesIngredients, ...newIngredients]
     saveIngredients(newTotalIngredients);
     setIngredients(newTotalIngredients)
   };

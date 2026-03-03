@@ -3,11 +3,11 @@ Plate Price
 
 Description (EN)
 ---------------
-Plate Price is a single-page web app to manage technical datasheets, products, and ingredient costs. It lets you build receipts, assign product units, and calculate totals with a mobile-friendly layout.
+Plate Price is a single-page web app to manage technical datasheets, products, and ingredient costs. It lets you build recipes, assign product units, and calculate totals with a mobile-friendly layout.
 
-Description (PT)
+Descrição (PT)
 ---------------
-Plate Price e um aplicativo web de pagina unica para gerenciar fichas tecnicas, produtos e custos de ingredientes. Ele permite criar fichas, definir unidades e calcular totais com layout amigavel para mobile.
+Plate Price é um aplicativo web de página única para gerenciar fichas técnicas, produtos e custos de ingredientes. Ele permite criar fichas, definir unidades e calcular totais com layout amigável para mobile.
 
 How to Run (EN)
 --------------
@@ -20,12 +20,22 @@ How to Run (EN)
 
 Como Rodar (PT)
 --------------
-1) Instale as dependencias
+1) Instale as dependências
    pnpm install
 2) Inicie o servidor de desenvolvimento
    pnpm dev
 3) Abra o app
    http://localhost:5173
+
+Benchmark (EN)
+--------------
+Run the storage benchmark script:
+   pnpm benchmark:storage
+
+Benchmark (PT)
+--------------
+Rode o script de benchmark de armazenamento:
+   pnpm benchmark:storage
 
 Tech Stack (EN)
 --------------
@@ -48,3 +58,4 @@ Tecnologias (PT)
 - Material UI 7.3.5
 - Zustand 5.0.8
 - LZ-String 1.5.0
+

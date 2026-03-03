@@ -14,14 +14,8 @@ export function exportLocalStorageToURL(): string {
       if (v != null) data[k] = JSON.parse(v);
     });
 
-    // Optionally include metadata
-    const payload = {
-      v: 1,
-      t: Date.now(),
-      data,
-    };
-
-    const json = JSON.stringify(payload);
+    // Keep payload minimal to maximize URL capacity.
+    const json = JSON.stringify(data);
     return LZString.compressToEncodedURIComponent(json);
   } catch (err) {
     console.log(err)
@@ -45,9 +39,8 @@ export function importLocalStorageFromURL(encoded: string): boolean {
       return false;
     }
 
-    if (!payload || typeof payload !== "object" || !payload.data) return false;
-
-    const incoming = payload.data;
+    if (!payload || typeof payload !== "object") return false;
+    const incoming = payload;
     
     Object.keys(incoming).forEach((key) => {
       try {

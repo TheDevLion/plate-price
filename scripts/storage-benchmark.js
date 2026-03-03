@@ -219,13 +219,25 @@ const unitCategory = (unit) => {
   return "random";
 };
 
-const makePayload = ({ sheets, products, ingredients, prices = 1 }) => {
-  const receipts = [];
+const BASE62_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const toBase62 = (value) => {
+  if (value === 0) return "0";
+  let num = value;
+  let out = "";
+  while (num > 0) {
+    out = BASE62_ALPHABET[num % 62] + out;
+    num = Math.floor(num / 62);
+  }
+  return out;
+};
+
+const makePayloadLegacy = ({ sheets, products, ingredients, prices = 1 }) => {
+  const recipes = [];
   const prods = [];
   const ings = [];
 
   for (let i = 0; i < sheets; i++) {
-    receipts.push({
+    recipes.push({
       id: String(1700000000000 + i),
       name: datasheetNames[i % datasheetNames.length],
     });
@@ -261,7 +273,7 @@ const makePayload = ({ sheets, products, ingredients, prices = 1 }) => {
     const prod = prods[i % Math.max(1, prods.length)];
     const productId = prod?.id ?? "1700002000000";
     const priceId = prod?.prices?.[0]?.id ?? "1700001000000";
-    const datasheetId = receipts[i % Math.max(1, receipts.length)]?.id ?? "1700000000000";
+    const datasheetId = recipes[i % Math.max(1, recipes.length)]?.id ?? "1700000000000";
     const category = unitCategory(prod?.unit ?? "kg");
     const qtyPool = ingredientQuantities[category];
     const quantity = qtyPool[i % qtyPool.length];
@@ -280,10 +292,72 @@ const makePayload = ({ sheets, products, ingredients, prices = 1 }) => {
     v: 1,
     t: 1700004000000,
     data: {
-      receipts,
+      recipes,
       products: prods,
       ingredients: ings,
     },
+  };
+};
+
+const makePayloadOptimized = ({ sheets, products, ingredients, prices = 1 }) => {
+  const recipes = [];
+  const prods = [];
+  const ings = [];
+
+  for (let i = 0; i < sheets; i++) {
+    const recipeId = toBase62(i + 1);
+    recipes.push([recipeId, datasheetNames[i % datasheetNames.length]]);
+  }
+
+  for (let i = 0; i < products; i++) {
+    const priceList = [];
+    const unit = units[i % units.length];
+    const category = unitCategory(unit);
+    const quantityPool = productQuantities[category];
+    const quantity = quantityPool[i % quantityPool.length];
+    const productId = toBase62(10_000 + i + 1);
+
+    for (let j = 0; j < prices; j++) {
+      const desc = priceDescriptions[(i + j) % priceDescriptions.length];
+      const base = 3.5 + (i % 10) * 1.2 + j * 0.9;
+      const priceId = toBase62(100_000 + i * 10 + j + 1);
+      priceList.push([priceId, desc, Math.round(base * 100) / 100]);
+    }
+
+    prods.push([
+      productId,
+      productNames[i % productNames.length],
+      quantity,
+      unit,
+      priceList,
+    ]);
+  }
+
+  for (let i = 0; i < ingredients; i++) {
+    const prod = prods[i % Math.max(1, prods.length)];
+    const productId = prod ? prod[0] : toBase62(10_000);
+    const firstPrice = prod && prod[4] && prod[4][0] ? prod[4][0] : null;
+    const priceId = firstPrice ? firstPrice[0] : toBase62(100_000);
+    const recipe = recipes[i % Math.max(1, recipes.length)];
+    const datasheetId = recipe ? recipe[0] : toBase62(1);
+    const category = unitCategory(prod ? prod[3] : "kg");
+    const qtyPool = ingredientQuantities[category];
+    const quantity = qtyPool[i % qtyPool.length];
+
+    ings.push([
+      toBase62(200_000 + i + 1),
+      productId,
+      priceId,
+      quantity,
+      prod ? prod[3] : "kg",
+      datasheetId,
+    ]);
+  }
+
+  return {
+    recipes,
+    products: prods,
+    ingredients: ings,
   };
 };
 
@@ -312,9 +386,9 @@ const report = (label, jsonValue, compressedValue) => {
   console.log(`${label.padEnd(24)} JSON: ${String(jsonValue).padStart(8)} | LZ: ${String(compressedValue).padStart(8)}`);
 };
 
-const avgPerItem = (kind, count) => {
+const avgPerItem = (makePayload, kind, count) => {
   const make = (n) => {
-    if (kind === "receipts") return makePayload({ sheets: n, products: 0, ingredients: 0 });
+    if (kind === "recipes") return makePayload({ sheets: n, products: 0, ingredients: 0 });
     if (kind === "products") return makePayload({ sheets: 0, products: n, ingredients: 0 });
     return makePayload({ sheets: 0, products: 0, ingredients: n });
   };
@@ -325,12 +399,12 @@ const avgPerItem = (kind, count) => {
   return { json: jsonDelta / count, lz: lzDelta / count };
 };
 
-const runSeparate = () => {
-  const maxReceiptsJson = findMaxCount(
+const runSeparate = (makePayload) => {
+  const maxRecipesJson = findMaxCount(
     (count) => makePayload({ sheets: count, products: 0, ingredients: 0 }),
     encoders.json
   );
-  const maxReceiptsLz = findMaxCount(
+  const maxRecipesLz = findMaxCount(
     (count) => makePayload({ sheets: count, products: 0, ingredients: 0 }),
     encoders.compressed
   );
@@ -354,12 +428,12 @@ const runSeparate = () => {
   );
 
   console.log("\nSeparate (one collection at a time)");
-  report("receipts", maxReceiptsJson, maxReceiptsLz);
+  report("recipes", maxRecipesJson, maxRecipesLz);
   report("products", maxProductsJson, maxProductsLz);
   report("ingredients", maxIngredientsJson, maxIngredientsLz);
 };
 
-const avgPerBlock = (count) => {
+const avgPerBlock = (makePayload, count) => {
   const base = makePayload({ sheets: 0, products: 0, ingredients: 0 });
   const withN = makePayload({ sheets: count, products: count, ingredients: count });
   const jsonDelta = encoders.json(withN).length - encoders.json(base).length;
@@ -367,25 +441,25 @@ const avgPerBlock = (count) => {
   return { json: jsonDelta / count, lz: lzDelta / count };
 };
 
-const runAverages = () => {
+const runAverages = (makePayload) => {
   const N = 1000;
-  const receipts = avgPerItem("receipts", N);
-  const products = avgPerItem("products", N);
-  const ingredients = avgPerItem("ingredients", N);
-  const block = avgPerBlock(N);
+  const recipes = avgPerItem(makePayload, "recipes", N);
+  const products = avgPerItem(makePayload, "products", N);
+  const ingredients = avgPerItem(makePayload, "ingredients", N);
+  const block = avgPerBlock(makePayload, N);
 
   console.log(`\nAverage chars per item (N=${N})`);
-  report("receipts", receipts.json.toFixed(2), receipts.lz.toFixed(2));
+  report("recipes", recipes.json.toFixed(2), recipes.lz.toFixed(2));
   report("products", products.json.toFixed(2), products.lz.toFixed(2));
   report("ingredients", ingredients.json.toFixed(2), ingredients.lz.toFixed(2));
 
   console.log(`\nAverage chars per block (1,1,1; N=${N})`);
   report("block", block.json.toFixed(2), block.lz.toFixed(2));
 
-  return { receipts, products, ingredients, block };
+  return { recipes, products, ingredients, block };
 };
 
-const runMixed = () => {
+const runMixed = (makePayload) => {
   const base = { sheets: 1, products: 1, ingredients: 1 };
 
   const maxMultiplierJson = findMaxCount(
@@ -407,18 +481,12 @@ const runMixed = () => {
   );
 
   console.log("\nMax combinations (1,1,1 base; scaled together)");
-  report("total sheets", base.sheets * maxMultiplierJson, base.sheets * maxMultiplierLz);
-  report("total products", base.products * maxMultiplierJson, base.products * maxMultiplierLz);
-  report(
-    "total ingredients",
-    base.ingredients * maxMultiplierJson,
-    base.ingredients * maxMultiplierLz
-  );
+  report("total combos (1,1,1)", maxMultiplierJson, maxMultiplierLz);
 
   return { maxMultiplierJson, maxMultiplierLz };
 };
 
-const runEstimateVsActual = (averages) => {
+const runEstimateVsActual = (makePayload, averages) => {
   const N = 100;
   const basePayload = makePayload({ sheets: 0, products: 0, ingredients: 0 });
   const baseJson = encoders.json(basePayload).length;
@@ -426,10 +494,10 @@ const runEstimateVsActual = (averages) => {
 
   const estimateJson =
     baseJson +
-    N * (averages.receipts.json + averages.products.json + averages.ingredients.json);
+    N * (averages.recipes.json + averages.products.json + averages.ingredients.json);
   const estimateLz =
     baseLz +
-    N * (averages.receipts.lz + averages.products.lz + averages.ingredients.lz);
+    N * (averages.recipes.lz + averages.products.lz + averages.ingredients.lz);
 
   const actualPayload = makePayload({ sheets: N, products: N, ingredients: N });
   const actualJson = encoders.json(actualPayload).length;
@@ -440,13 +508,20 @@ const runEstimateVsActual = (averages) => {
   report("actual length", actualJson, actualLz);
 };
 
+const runSuite = (name, makePayload) => {
+  console.log(`\n============================================================`);
+  console.log(`Benchmark profile: ${name}`);
+  console.log(`============================================================`);
+  runSeparate(makePayload);
+  runMixed(makePayload);
+  const averages = runAverages(makePayload);
+  runEstimateVsActual(makePayload, averages);
+};
+
 console.log(`Storage benchmark (max chars: ${maxChars})`);
-runSeparate();
-runMixed();
-const averages = runAverages();
-runEstimateVsActual(averages);
+runSuite("legacy (object + envelope v/t/data + long numeric IDs)", makePayloadLegacy);
+runSuite("optimized (direct keys + tuples + base62 IDs)", makePayloadOptimized);
 
 console.log("\nTip:");
 console.log("  Pass max chars as a single argument, e.g.: node scripts/storage-benchmark.js 5000");
 console.log("  LZ uses LZString.compressToEncodedURIComponent over JSON.");
-console.log("  Add an 'optimized' encoder to compare later.");
