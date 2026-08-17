@@ -4,6 +4,10 @@ export const STORE_APP_KEYS = {
   ingredients: "ingredients"
 };
 
+export const LEGACY_STORE_APP_KEYS = {
+  receipts: "receipts",
+};
+
 export const CONVERSIONS = [
   // Volume
   { name: "Fluid Ounce", abbv: "fl_oz", conv_rate: 1, category: "volume" },

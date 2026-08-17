@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
-import { STORE_APP_KEYS } from "../../constants";
+import { LEGACY_STORE_APP_KEYS, STORE_APP_KEYS } from "../../constants";
 import { loadFromStorage, saveToStorage } from "../../core/storage";
+import { decodeIngredients, decodeProducts, decodeRecipes } from "../../helpers/decode_store";
 
 //----------------      Basic Types
 export type TechnicalDatasheetRecord = [string, string];
@@ -31,7 +32,7 @@ export const productId = (product: Product) => product[0];
 export const productName = (product: Product) => product[1];
 export const productQuantity = (product: Product) => product[2];
 export const productUnit = (product: Product) => product[3];
-export const productPrices = (product: Product) => product[4];
+export const productPrices = (product: Product) => product[4] ?? [];
 
 export type Ingredient = [string, string, string, number | "", string, string];
 export const makeIngredient = (
@@ -72,8 +73,11 @@ export type TechnicalDatasheetActions = {
 
 export type TechnicalDatasheetStore = TechnicalDatasheetState & TechnicalDatasheetActions;
 
-const decodeRecipes = (raw: unknown): TechnicalDatasheetRecord[] =>
-  Array.isArray(raw) ? (raw as TechnicalDatasheetRecord[]) : [];
+const loadRecipesRaw = (): unknown => {
+    const recipes = loadFromStorage<unknown | null>(STORE_APP_KEYS.recipes, null);
+    if (recipes != null) return recipes;
+    return loadFromStorage<unknown>(LEGACY_STORE_APP_KEYS.receipts, []);
+};
 
 
 //----------------      Store
@@ -94,18 +98,21 @@ export const useTechnicalDatasheetStore = create<TechnicalDatasheetStore>()((set
     }),
     setProducts: (products: Product[]) => set((state) => ({...state, products })),
     setIngredients: (ingredients: Ingredient[]) => set((state) => ({...state, ingredients })),
-    loadDatasheets: () => set((state) => ({
-        ...state,
-        datasheets: decodeRecipes(loadFromStorage<unknown>(STORE_APP_KEYS.recipes, [])),
-    })),
-    loadProducts: () => set((state) => ({
-        ...state,
-        products: loadFromStorage<Product[]>(STORE_APP_KEYS.products, []),
-    })),
-    loadIngredients: () => set((state) => ({
-        ...state,
-        ingredients: loadFromStorage<Ingredient[]>(STORE_APP_KEYS.ingredients, []),
-    })),
+    loadDatasheets: () => set((state) => {
+        const datasheets = decodeRecipes(loadRecipesRaw());
+        saveToStorage(STORE_APP_KEYS.recipes, datasheets);
+        return { ...state, datasheets };
+    }),
+    loadProducts: () => set((state) => {
+        const products = decodeProducts(loadFromStorage<unknown>(STORE_APP_KEYS.products, []));
+        saveToStorage(STORE_APP_KEYS.products, products);
+        return { ...state, products };
+    }),
+    loadIngredients: () => set((state) => {
+        const ingredients = decodeIngredients(loadFromStorage<unknown>(STORE_APP_KEYS.ingredients, []));
+        saveToStorage(STORE_APP_KEYS.ingredients, ingredients);
+        return { ...state, ingredients };
+    }),
     saveProducts: (products: Product[]) => saveToStorage(STORE_APP_KEYS.products, products),
     saveIngredients: (ingredients: Ingredient[]) => saveToStorage(STORE_APP_KEYS.ingredients, ingredients),
 }));
