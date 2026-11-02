@@ -4,6 +4,9 @@
 
 - O campo de produto dos ingredientes agora permite buscar pelo nome, no celular e no desktop.
 - O seletor de unidades agora permite digitar para buscar por nome ou sigla, mantendo o filtro por categoria e a seleção de unidades válidas.
+- Layout mobile com navegação compacta, ações organizadas, campos maiores e totais que cabem em telas estreitas, preservando a apresentação desktop.
+- Editor de produtos ocupa a tela pequena, mantém as ações acessíveis durante a rolagem e dá mais espaço às descrições de preços. Adicionar produto ou preço leva o foco ao campo novo.
+- Menus de busca e confirmações se ajustam a telas estreitas e com pouca altura.
 
 ## 0.1.0 — preparação local
 
