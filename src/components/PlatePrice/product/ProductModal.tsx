@@ -54,6 +54,7 @@ export const ProductsModal = ({ onClose }: Props) => {
     const handleAddProduct = () => {
         const newProd: Product = makeProduct(getNextId(), "", 1, "", []);
         setProducts([...products, newProd])
+        requestAnimationFrame(() => document.getElementById(`product-name-${productId(newProd)}`)?.focus());
     };
 
     const handleDeleteProduct = (id: string) => {
@@ -73,6 +74,7 @@ export const ProductsModal = ({ onClose }: Props) => {
             ) : p
         );
         setProducts(updated)
+        requestAnimationFrame(() => document.getElementById(`price-description-${priceId(newPrice)}`)?.focus());
     };
 
     const handleChangeProduct = (id: string, field: "name" | "quantity" | "unit", value: number | string) => {
@@ -135,10 +137,17 @@ export const ProductsModal = ({ onClose }: Props) => {
                 fullWidth
                 maxWidth="lg"
                 aria-labelledby={titleId}
-                slotProps={{ paper: { component: "form", onSubmit: saveChanges, sx: { m: { xs: 1, sm: 4 }, width: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" }, maxHeight: "90dvh" } } }}
+                slotProps={{ paper: { component: "form", onSubmit: saveChanges, sx: {
+                    m: { xs: 1, sm: 4 },
+                    width: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" },
+                    maxHeight: "90dvh",
+                    "@media (max-width: 639px), (max-height: 480px)": {
+                        m: 0, width: "100%", maxWidth: "100%", height: "100dvh", maxHeight: "100dvh", borderRadius: 0,
+                    },
+                } } }}
             >
                 <ProductsModalHeader titleId={titleId} onAddProduct={handleAddProduct} onClose={handleClose} />
-                <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
+                <DialogContent dividers sx={{ p: { xs: 2, sm: 3 }, minHeight: 0, overscrollBehavior: "contain" }}>
                     {saveError && <Alert severity="error" sx={{ mb: 2 }}>{t("saveError")}</Alert>}
                     <ProductsTable
                         products={products}

@@ -14,4 +14,10 @@
     @apply hover:border-grape-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-grape-500 focus-visible:ring-offset-1;
     @apply disabled:cursor-not-allowed disabled:bg-grape-50 disabled:text-grape-700;
   }
+
+  @media (max-width: 639px) {
+    .product-modal-footer {
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+  }
 }

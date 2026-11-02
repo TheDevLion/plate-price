@@ -79,24 +79,31 @@ export const ProductsTable = ({ products, onAddPrice, onDeleteProduct, onDeleteP
               <span className="mb-1 block text-xs font-medium text-grape-700 lg:hidden">{t("tablePrices")}</span>
               <div className="space-y-2">
                 {productPrices(product).map(price => (
-                  <div key={priceId(price)} className="grid grid-cols-[minmax(0,1fr)_6rem_44px] items-center gap-2">
-                    <input
-                      aria-label={t("description")}
-                      placeholder={t("description")}
-                      className="ui-control w-full"
-                      value={priceDescription(price)}
-                      onChange={event => onChangePrice(productId(product), priceId(price), "description", event.target.value)}
-                    />
-                    <input
-                      aria-label={`${t("priceValue")} (${t("currencyPrefix")})`}
-                      type="number"
-                      min="0"
-                      step="any"
-                      inputMode="decimal"
-                      className="ui-control w-full tabular-nums"
-                      value={priceValue(price)}
-                      onChange={event => onChangePrice(productId(product), priceId(price), "value", event.target.value === "" ? "" : Number(event.target.value))}
-                    />
+                  <div key={priceId(price)} className="grid grid-cols-[minmax(0,1fr)_44px] items-end gap-2 rounded-lg bg-grape-50 p-3 sm:grid-cols-[minmax(0,1fr)_6rem_44px] sm:items-center sm:rounded-none sm:bg-transparent sm:p-0">
+                    <label className="col-span-2 min-w-0 sm:col-span-1">
+                      <span className="mb-1 block text-xs font-medium text-grape-700 sm:hidden">{t("description")}</span>
+                      <input
+                        id={`price-description-${priceId(price)}`}
+                        aria-label={t("description")}
+                        placeholder={t("description")}
+                        className="ui-control w-full"
+                        value={priceDescription(price)}
+                        onChange={event => onChangePrice(productId(product), priceId(price), "description", event.target.value)}
+                      />
+                    </label>
+                    <label className="min-w-0">
+                      <span className="mb-1 block text-xs font-medium text-grape-700 sm:hidden">{t("priceValue")} ({t("currencyPrefix")})</span>
+                      <input
+                        aria-label={`${t("priceValue")} (${t("currencyPrefix")})`}
+                        type="number"
+                        min="0"
+                        step="any"
+                        inputMode="decimal"
+                        className="ui-control w-full tabular-nums"
+                        value={priceValue(price)}
+                        onChange={event => onChangePrice(productId(product), priceId(price), "value", event.target.value === "" ? "" : Number(event.target.value))}
+                      />
+                    </label>
                     <Tooltip title={t("deletePrice")}>
                       <IconButton color="error" aria-label={t("deletePrice")} onClick={() => onDeletePrice(productId(product), priceId(price))}>
                         <Delete fontSize="small" />

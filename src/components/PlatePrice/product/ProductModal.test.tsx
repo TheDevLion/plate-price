@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { I18nProvider } from "../../../i18n/I18nProvider";
 import { initialStore, makeProduct, useTechnicalDatasheetStore } from "../store";
@@ -18,6 +18,17 @@ afterEach(() => {
 });
 
 describe("ProductsModal", () => {
+  it("focuses newly added products and prices so they can be edited immediately", async () => {
+    render(<I18nProvider><ProductsModal onClose={vi.fn()} /></I18nProvider>);
+    fireEvent.click(screen.getByRole("button", { name: "Add Product" }));
+    const name = screen.getAllByLabelText("Name").at(-1)!;
+    await waitFor(() => expect(document.activeElement).toBe(name));
+    fireEvent.change(name, { target: { value: "Milk" } });
+    fireEvent.click(screen.getAllByRole("button", { name: "Add price" }).at(-1)!);
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText("Description")));
+    expect(useTechnicalDatasheetStore.getState().products).toHaveLength(1);
+  });
+
   it("keeps edits in a draft and confirms closing without changing saved products", () => {
     const onClose = vi.fn();
     render(<I18nProvider><ProductsModal onClose={onClose} /></I18nProvider>);

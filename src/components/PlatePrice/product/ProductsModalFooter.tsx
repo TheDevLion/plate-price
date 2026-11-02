@@ -11,8 +11,8 @@ export const ProductsModalFooter = ({ onClose, isDirty }: ProductsModalFooterPro
   const { t } = useI18n();
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2 px-4 py-3 sm:px-6">
-      {isDirty && <span className="mr-auto text-sm text-grape-700" role="status">{t("unsavedChanges")}</span>}
+    <div className="product-modal-footer grid shrink-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2 px-4 py-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end sm:px-6">
+      {isDirty && <span className="col-span-2 mr-auto text-sm text-grape-700" role="status">{t("unsavedChanges")}</span>}
       <Button color="secondary" onClick={onClose}>{t("close")}</Button>
       <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
         {t("saveAndClose")}

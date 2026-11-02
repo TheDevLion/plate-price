@@ -12,13 +12,17 @@ export const ProductsModalHeader = ({ titleId, onAddProduct, onClose }: Products
   const { t } = useI18n();
 
   return (
-    <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
-      <h2 id={titleId} className="min-w-0 flex-1 text-xl font-semibold">{t("productsManagement")}</h2>
-      <IconButton onClick={onClose} aria-label={t("close")} sx={{ order: { sm: 1 } }}>
+    <div className="flex shrink-0 flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
+      <h2 id={titleId} className="min-w-0 flex-1 text-xl font-semibold">
+        <span className="sm:hidden">{t("productsShort")}</span>
+        <span className="hidden sm:inline">{t("productsManagement")}</span>
+      </h2>
+      <IconButton onClick={onClose} aria-label={t("close")} sx={{ order: 1 }}>
         <Close />
       </IconButton>
-      <Button variant="outlined" startIcon={<Add />} onClick={onAddProduct} sx={{ width: { xs: "100%", sm: "auto" } }}>
-        {t("addProduct")}
+      <Button variant="outlined" startIcon={<Add />} onClick={onAddProduct} aria-label={t("addProduct")}>
+        <span className="sm:hidden">{t("addShort")}</span>
+        <span className="hidden sm:inline">{t("addProduct")}</span>
       </Button>
     </div>
   );
