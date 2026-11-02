@@ -11,7 +11,7 @@ export const PlatePrice = () => {
   }, [loadDatasheets])
 
   return (
-    <div className="min-h-screen bg-grape-50">
+    <div className="bg-grape-50 sm:min-h-screen">
       <PlatePriceHeader />
       <PlatePriceContent />
     </div>

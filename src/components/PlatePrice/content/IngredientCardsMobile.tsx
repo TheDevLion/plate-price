@@ -112,7 +112,7 @@ export const IngredientCardsMobile = ({
           </div>
           <div className="flex items-center justify-between gap-3 border-t border-grape-100 px-4 py-3">
             <FieldBlock label={t("tableTotal")}>
-              <div className="text-lg font-semibold tabular-nums">
+              <div className="break-words text-lg font-semibold tabular-nums">
                 {t("currencyPrefix")}{" "}
                 {Number.isFinite(getProductPrice(ingredient))
                   ? getProductPrice(ingredient)!.toFixed(2)
@@ -120,7 +120,7 @@ export const IngredientCardsMobile = ({
               </div>
             </FieldBlock>
 
-            <Button color="error" startIcon={<Delete fontSize="small" />} onClick={() => onDelete(ingredientId(ingredient))}>
+            <Button color="error" startIcon={<Delete fontSize="small" />} onClick={() => onDelete(ingredientId(ingredient))} sx={{ flexShrink: 0 }}>
               {t("delete")}
             </Button>
           </div>

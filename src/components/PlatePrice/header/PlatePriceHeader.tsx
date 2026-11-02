@@ -90,19 +90,19 @@ export const PlatePriceHeader = () => {
 
 
   return (
-    <header className="border-b border-grape-100 bg-white px-4 py-5 sm:px-6">
-      <div className="mx-auto max-w-5xl space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-bold sm:text-3xl">{t("headerTitle")}</h1>
+    <header className="border-b border-grape-100 bg-white px-4 py-4 sm:px-6 sm:py-5">
+      <div className="mx-auto max-w-5xl space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between gap-3 sm:flex-wrap">
+          <h1 className="min-w-0 text-xl font-bold sm:text-3xl">{t("headerTitle")}</h1>
           <ShareButton />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-[minmax(0,1fr)_44px_44px] items-center gap-2 sm:flex sm:flex-wrap">
           <select
             value={selectedRecipe ? selectedSheet : ""}
             onChange={event => handleSelect(event.target.value)}
             aria-label={t("selectRecipePlaceholder")}
-            className="ui-control w-full sm:w-72"
+            className={`ui-control w-full sm:w-72 ${selectedRecipe ? "" : "col-span-3"}`}
           >
             <option value="">{t("selectRecipePlaceholder")}</option>
             {datasheets.map(recipe => (
@@ -127,12 +127,16 @@ export const PlatePriceHeader = () => {
             </>
           )}
 
-          <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECIPE.id)}>
-            {t("addRecipe")}
-          </Button>
-          <Button variant="outlined" startIcon={<Inventory2 fontSize="small" />} onClick={() => setShowProductsModal(true)} sx={{ marginLeft: { sm: "auto" } }}>
-            {t("manageProducts")}
-          </Button>
+          <div className="col-span-3 grid grid-cols-2 gap-2 sm:contents">
+            <Button variant="contained" startIcon={<Add />} aria-label={t("addRecipe")} onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECIPE.id)}>
+              <span className="sm:hidden">{t("newRecipe")}</span>
+              <span className="hidden sm:inline">{t("addRecipe")}</span>
+            </Button>
+            <Button variant="outlined" startIcon={<Inventory2 fontSize="small" />} aria-label={t("manageProducts")} onClick={() => setShowProductsModal(true)} sx={{ marginLeft: { sm: "auto" }, "@media (max-width: 639px)": { marginLeft: 0 } }}>
+              <span className="sm:hidden">{t("productsShort")}</span>
+              <span className="hidden sm:inline">{t("manageProducts")}</span>
+            </Button>
+          </div>
         </div>
       </div>
 

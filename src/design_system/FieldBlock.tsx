@@ -9,7 +9,7 @@ type FieldBlockProps = {
 
 export const FieldBlock = ({ label, children, className, htmlFor }: FieldBlockProps) => {
   return (
-    <div className={className}>
+    <div className={`min-w-0 ${className ?? ""}`}>
       {htmlFor ? (
         <label htmlFor={htmlFor} className="block text-xs font-medium text-grape-700">{label}</label>
       ) : (

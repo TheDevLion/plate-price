@@ -30,9 +30,10 @@ export const ShareButton = () => {
         color="primary"
         startIcon={copied ? <ContentCopyIcon /> : <ShareIcon />}
         onClick={handleShare}
-        sx={{ m: 1 }}
+        aria-label={copied ? t("copied") : t("share")}
+        sx={{ m: 1, "@media (max-width: 639px)": { m: 0, minWidth: 44, px: 1, "& .MuiButton-startIcon": { m: 0 } } }}
       >
-        {copied ? t("copied") : t("share")}
+        <span className="sr-only sm:not-sr-only">{copied ? t("copied") : t("share")}</span>
       </Button>
     </Tooltip>
   );

@@ -15,12 +15,25 @@ export const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-dvh flex flex-col sm:min-h-screen">
       
       <nav className="bg-grape-50 shadow-md">
-        <ul className="relative flex flex-col items-center gap-2 bg-gradient-to-br from-grape-500 to-ink px-3 py-2 sm:flex-row sm:justify-center">          
-          <img src={tabIcon} className="w-[48px] sm:w-[60px]"/>
-          <li>
+        <ul className="relative flex items-center gap-2 bg-gradient-to-br from-grape-500 to-ink px-3 py-2 sm:justify-center">
+          {document.fullscreenEnabled && (
+            <li className="shrink-0 sm:hidden">
+              <button
+                className="min-h-11 min-w-11 bg-grape-100 hover:bg-white text-ink p-1 rounded border border-grape-200 shadow-sm"
+                onClick={toggleFullscreen}
+                type="button"
+                aria-label={t("toggleFullscreen")}
+                title={t("toggleFullscreen")}
+              >
+                <FullscreenIcon fontSize="small" />
+              </button>
+            </li>
+          )}
+          <li className="shrink-0"><img src={tabIcon} alt="" className="w-8 sm:w-[60px]" /></li>
+          <li className="min-w-0 flex-1 sm:flex-none">
             <Link
               to="/"
               className="text-white font-medium hover:text-grape-100 active:text-grape-200 transition-colors"
@@ -28,22 +41,12 @@ export const Layout = () => {
               {t("appTitle")}
             </Link>
           </li>
-          <li className="absolute left-3 top-2 sm:hidden">
+          <li className="shrink-0 sm:absolute sm:right-3 sm:top-2">
             <button
-              className="bg-grape-100 hover:bg-white text-ink p-1 rounded border border-grape-200 shadow-sm"
-              onClick={toggleFullscreen}
-              type="button"
-              aria-label="Toggle fullscreen"
-              title="Toggle fullscreen"
-            >
-              <FullscreenIcon fontSize="small" />
-            </button>
-          </li>
-          <li className="absolute right-3 top-2">
-            <button
-              className="bg-grape-100 hover:bg-white text-ink text-xs font-semibold px-2 py-1 rounded border border-grape-200 shadow-sm"
+              className="min-h-11 min-w-11 bg-grape-100 hover:bg-white text-ink text-xs font-semibold px-2 py-1 rounded border border-grape-200 shadow-sm sm:min-h-0 sm:min-w-0"
               onClick={toggleLanguage}
               type="button"
+              aria-label={language === "en" ? "Mudar para português" : "Switch to English"}
             >
               {language === "en" ? "PT" : "EN"}
             </button>
@@ -51,7 +54,7 @@ export const Layout = () => {
         </ul>
       </nav>
 
-      <main className="flex-1 p-2">
+      <main className="min-w-0 flex-1 sm:p-2">
         <Outlet />
       </main>
     </div>

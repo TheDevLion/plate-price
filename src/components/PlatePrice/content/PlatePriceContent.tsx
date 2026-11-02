@@ -160,7 +160,7 @@ export const PlatePriceContent = () => {
     );
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col py-6 px-3 sm:px-4">
+    <div className="mx-auto flex max-w-5xl flex-col py-4 px-4 sm:py-6">
       <IngredientSummary
         totalCount={ingredientsToShow.length}
         totalCost={totalCost}
