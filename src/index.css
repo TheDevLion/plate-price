@@ -4,12 +4,14 @@
 
 @layer base {
   body {
-    @apply bg-grape-50 text-ink;
+    @apply bg-grape-50 text-ink antialiased;
   }
 }
 
-@layer base {
-  body {
-    @apply bg-grape-50 text-ink;
+@layer components {
+  .ui-control {
+    @apply min-h-11 min-w-0 max-w-full rounded-lg border border-grape-100 bg-white px-3 py-2 text-base text-ink;
+    @apply hover:border-grape-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-grape-500 focus-visible:ring-offset-1;
+    @apply disabled:cursor-not-allowed disabled:bg-grape-50 disabled:text-grape-700;
   }
 }

@@ -1,5 +1,6 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useState } from "react";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import { useDatasheets, useSelectedSheet, makeRecipe, recipeId, recipeName } from "../store";
 import { getNextId } from "../../../helpers/idCounter";
 import Inventory2 from "@mui/icons-material/Inventory2";
@@ -12,6 +13,7 @@ export const PlatePriceHeader = () => {
   const { t } = useI18n();
   const {selectedSheet, setSelectedSheet} = useSelectedSheet()
   const {datasheets, setDatasheets} = useDatasheets()
+  const selectedRecipe = datasheets.find(d => recipeId(d) === selectedSheet);
 
   const DIALOG_ACTIONS = {
     ADD_RECIPE: {
@@ -71,12 +73,13 @@ export const PlatePriceHeader = () => {
 
     const updatedDatasheets = datasheets.filter(d => recipeId(d) !== recipeId(currentDatasheetObj))
     setDatasheets(updatedDatasheets);
+    setSelectedSheet(updatedDatasheets[0]?.[0]);
 
     handleCloseConfirmDialog();
   };
 
   const handleSelect = (id: string) => {
-    if (id) setSelectedSheet(id);
+    setSelectedSheet(id || undefined);
   };
 
   const CONFIRM_HANDLERS = {
@@ -87,73 +90,62 @@ export const PlatePriceHeader = () => {
 
 
   return (
-    <header className="relative flex flex-col items-center justify-center py-2 border-b border-grape-200 bg-white shadow-sm">
-      <div className="self-end mb-2 sm:mb-0 sm:absolute sm:top-1 sm:right-1">
-        <ShareButton />
+    <header className="border-b border-grape-100 bg-white px-4 py-5 sm:px-6">
+      <div className="mx-auto max-w-5xl space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold sm:text-3xl">{t("headerTitle")}</h1>
+          <ShareButton />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={selectedRecipe ? selectedSheet : ""}
+            onChange={event => handleSelect(event.target.value)}
+            aria-label={t("selectRecipePlaceholder")}
+            className="ui-control w-full sm:w-72"
+          >
+            <option value="">{t("selectRecipePlaceholder")}</option>
+            {datasheets.map(recipe => (
+              <option key={recipeId(recipe)} value={recipeId(recipe)}>
+                {recipeName(recipe)}
+              </option>
+            ))}
+          </select>
+
+          {selectedRecipe && (
+            <>
+              <Tooltip title={t("editRecipe")}>
+                <IconButton onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.EDIT_RECIPE.id)} aria-label={t("editRecipe")} color="primary">
+                  <Edit fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={t("deleteRecipe")}>
+                <IconButton onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.DELETE_RECIPE.id)} aria-label={t("deleteRecipe")} color="error">
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
+
+          <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECIPE.id)}>
+            {t("addRecipe")}
+          </Button>
+          <Button variant="outlined" startIcon={<Inventory2 fontSize="small" />} onClick={() => setShowProductsModal(true)} sx={{ marginLeft: { sm: "auto" } }}>
+            {t("manageProducts")}
+          </Button>
+        </div>
       </div>
 
-      <h1 className="font-bold text-3xl mb-3">{t("headerTitle")}</h1>
-
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        <select
-          value={selectedSheet ?? ""}
-          onChange={(e) => handleSelect(e.target.value)}
-          className="w-full sm:w-auto border border-grape-200 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-grape-400"
-        >
-          <option value="">{t("selectRecipePlaceholder")}</option>
-          {datasheets.map((r) => (
-            <option key={recipeId(r)} value={recipeId(r)}>
-              {recipeName(r)}
-            </option>
-          ))}
-        </select>
-
-        {selectedSheet && (
-          <>
-            <button
-              className="bg-ink hover:bg-black text-white p-2 rounded transition"
-              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.EDIT_RECIPE.id)}
-              aria-label={t("editRecipe")}
-            >
-              <Edit fontSize="small" />
-            </button>
-            <button
-              className="bg-ink hover:bg-black text-white p-2 rounded transition"
-              onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.DELETE_RECIPE.id)}
-              aria-label={t("deleteRecipe")}
-            >
-              <Delete fontSize="small" />
-            </button>
-          </>
-        )}
-
-        <button
-          className="bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-1 sm:m-2"
-          onClick={() => handleOpenConfirmDialog(DIALOG_ACTIONS.ADD_RECIPE.id)}
-          aria-label={t("addRecipe")}
-        >
-          <Add />
-        </button>
-
-      </div>
-
-      <button
-        className="w-full sm:w-auto bg-grape-600 hover:bg-grape-700 text-white p-2 rounded shadow transition m-2"
-        onClick={() => setShowProductsModal(true)}
-      >
-        <Inventory2 fontSize="small" /> {t("manageProducts")}
-      </button>
-
-      {showProductsModal && (
-        <ProductsModal onClose={() => setShowProductsModal(false)} />
-      )}
+      {showProductsModal && <ProductsModal onClose={() => setShowProductsModal(false)} />}
 
       <ConfirmDialog
-        open={!!openConfirmDialog} 
-        title={DIALOG_ACTIONS[openConfirmDialog as keyof typeof DIALOG_ACTIONS]?.title || ''}
-        onClose={handleCloseConfirmDialog} 
-        onConfirm={CONFIRM_HANDLERS[openConfirmDialog as keyof typeof CONFIRM_HANDLERS] || (() => {})} 
+        open={!!openConfirmDialog}
+        title={DIALOG_ACTIONS[openConfirmDialog as keyof typeof DIALOG_ACTIONS]?.title || ""}
+        onClose={handleCloseConfirmDialog}
+        onConfirm={CONFIRM_HANDLERS[openConfirmDialog as keyof typeof CONFIRM_HANDLERS] || (() => {})}
         noText={openConfirmDialog === DIALOG_ACTIONS.DELETE_RECIPE.id}
+        initialValue={openConfirmDialog === DIALOG_ACTIONS.EDIT_RECIPE.id && selectedRecipe ? recipeName(selectedRecipe) : ""}
+        description={openConfirmDialog === DIALOG_ACTIONS.DELETE_RECIPE.id && selectedRecipe ? recipeName(selectedRecipe) : undefined}
       />
     </header>
   );

@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useId, useState, type FormEvent } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
   DialogActions,
   TextField,
-  Button
-} from '@mui/material';
+  Button,
+} from "@mui/material";
 import { useI18n } from "../i18n/useI18n";
 
 export type ConfirmDialogProps = {
@@ -15,47 +16,62 @@ export type ConfirmDialogProps = {
   onClose: () => void;
   onConfirm: (value: string) => void;
   noText: boolean;
+  initialValue?: string;
+  description?: string;
+  confirmLabel?: string;
 };
 
-export const ConfirmDialog = ({ open, title, onClose, onConfirm, noText }: ConfirmDialogProps) => {
+export const ConfirmDialog = ({
+  open, title, onClose, onConfirm, noText, initialValue = "", description, confirmLabel,
+}: ConfirmDialogProps) => {
   const { t } = useI18n();
-  const [value, setValue] = useState('');
+  const titleId = useId();
+  const descriptionId = useId();
+  const [value, setValue] = useState(initialValue);
 
-  const handleConfirm = () => {
-    onConfirm(noText ? 'true' : value);
-    setValue('');
-  };
+  useEffect(() => {
+    if (open) setValue(initialValue);
+  }, [open, initialValue]);
 
-  const handleClose = () => {
-    onClose();
-    setValue('');
+  const handleConfirm = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!noText && !value.trim()) return;
+    onConfirm(noText ? "true" : value.trim());
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="xs"
+      aria-labelledby={titleId}
+      aria-describedby={description ? descriptionId : undefined}
+      slotProps={{ paper: { component: "form", onSubmit: handleConfirm } }}
+    >
+      <DialogTitle id={titleId}>{title}</DialogTitle>
       <DialogContent>
+        {description && <DialogContentText id={descriptionId}>{description}</DialogContentText>}
         {!noText && (
           <TextField
             autoFocus
+            label={t("recipeName")}
             margin="dense"
             fullWidth
+            required
             value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') handleConfirm();
-          }}
-            />
+            onChange={event => setValue(event.target.value)}
+          />
         )}
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="secondary">
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button onClick={onClose} color="secondary" autoFocus={noText}>
           {t("cancel")}
         </Button>
-        <Button onClick={handleConfirm} variant="contained" color="primary">
-          {t("ok")}
+        <Button type="submit" variant="contained" color={noText ? "error" : "primary"} disabled={!noText && !value.trim()}>
+          {confirmLabel ?? t(noText ? "delete" : "save")}
         </Button>
       </DialogActions>
     </Dialog>
   );
-}
+};
