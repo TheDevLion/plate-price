@@ -1,6 +1,5 @@
 import { Delete } from "@mui/icons-material";
-import type { SyntheticEvent } from "react";
-import { UnitPicker, type Option } from "../../../core/UnitPicker";
+import { UnitPicker } from "../../../core/UnitPicker";
 import type { Product } from "../store";
 import {
   productId,
@@ -26,11 +25,6 @@ type ProductsTableProps = {
     field: "description" | "value",
     value: string | number
   ) => void;
-  onUnitChange: (
-    productId: string,
-    event: SyntheticEvent<Element, Event>,
-    value: Option | null
-  ) => void;
 };
 
 export const ProductsTable = ({
@@ -40,7 +34,6 @@ export const ProductsTable = ({
   onDeletePrice,
   onChangeProduct,
   onChangePrice,
-  onUnitChange,
 }: ProductsTableProps) => {
   const { t } = useI18n();
 
@@ -83,9 +76,8 @@ export const ProductsTable = ({
               </td>
               <td className="border border-grape-200 p-1">
                 <UnitPicker
-                  abbvVersion
                   unitState={productUnit(product)}
-                  handleUnitChange={(e, value) => onUnitChange(productId(product), e, value)}
+                  onChange={unit => onChangeProduct(productId(product), "unit", unit)}
                 />
               </td>
               <td className="border border-grape-200 p-2 align-top">

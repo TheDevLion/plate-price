@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import type { Option } from "../../../core/UnitPicker";
 import {
   useProducts,
   type Product,
@@ -111,11 +110,7 @@ export const ProductsModal = ({ onClose }: Props) => {
        setProducts(updated)
     };
 
-    const handleUnitChange = (productId: string, _: React.SyntheticEvent<Element, Event>, value: Option | null) => {
-        if (!value) return;
-        const unit = value.abbv;
-        handleChangeProduct(productId, "unit", unit);
-    };
+
 
 
     return (
@@ -132,7 +127,6 @@ export const ProductsModal = ({ onClose }: Props) => {
                     onDeletePrice={handleDeletePrice}
                     onChangeProduct={handleChangeProduct}
                     onChangePrice={handleChangePrice}
-                    onUnitChange={handleUnitChange}
                 />
                 </div>
 

@@ -43,7 +43,28 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 10,
+          minHeight: 44,
         },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: { minWidth: 44, minHeight: 44 },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          minHeight: 44,
+          fontSize: "0.875rem",
+          backgroundColor: theme.palette.background.paper,
+          "& .MuiOutlinedInput-notchedOutline": { borderColor: theme.palette.divider },
+        }),
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: { minHeight: 44, fontSize: "0.875rem", "@media (min-width: 600px)": { minHeight: 44 } },
       },
     },
     MuiDialog: {

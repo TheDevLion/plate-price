@@ -1,5 +1,4 @@
-import type { SyntheticEvent } from "react";
-import { UnitPicker, type Option } from "../../../core/UnitPicker";
+import { UnitPicker } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
 import {
   productId,
@@ -22,11 +21,6 @@ type IngredientCardsMobileProps = {
   products: Product[];
   onChange: (id: string, field: "productId" | "priceId" | "quantity" | "unit", value: string | number) => void;
   onDelete: (id: string) => void;
-  onUnitChange: (
-    id: string,
-    event: SyntheticEvent<Element, Event>,
-    value: Option | null
-  ) => void;
   getUnitCategory: (productId: string) => string | undefined;
   getProductPrice: (ingredient: Ingredient) => number | undefined;
 };
@@ -36,7 +30,6 @@ export const IngredientCardsMobile = ({
   products,
   onChange,
   onDelete,
-  onUnitChange,
   getUnitCategory,
   getProductPrice,
 }: IngredientCardsMobileProps) => {
@@ -110,12 +103,10 @@ export const IngredientCardsMobile = ({
             </FieldBlock>
             <FieldBlock label={t("tableUnit")} className="flex flex-col items-center">
               <UnitPicker
-                abbvVersion
                 unitState={ingredientUnit(ingredient)}
                 category={getUnitCategory(ingredientProductId(ingredient))}
-                handleUnitChange={(e, value) =>
-                  onUnitChange(ingredientId(ingredient), e, value)
-                }
+                onChange={unit => onChange(ingredientId(ingredient), "unit", unit)}
+                disabled={!ingredientProductId(ingredient)}
               />
             </FieldBlock>
 

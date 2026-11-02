@@ -19,7 +19,6 @@ import {
   ingredientUnit,
 } from "../store";
 import { getNextId } from "../../../helpers/idCounter";
-import type { Option } from "../../../core/UnitPicker";
 import { convertValue } from "../../../helpers/convert_values";
 import { CONVERSIONS } from "../../../constants";
 import { useI18n } from "../../../i18n/useI18n";
@@ -145,11 +144,7 @@ export const PlatePriceContent = () => {
     }
   };
 
-  const handleUnitChange = (productIdValue: string, _: React.SyntheticEvent<Element, Event>, value: Option | null) => {
-        if (!value) return;
-        const unit = value.abbv;
-        handleChange(productIdValue, "unit", unit);
-    };
+
 
   const getUnitCategory = (productIdValue: string) => {
     if (!productIdValue) return undefined;
@@ -198,7 +193,6 @@ export const PlatePriceContent = () => {
             products={products}
             onChange={handleChange}
             onDelete={handleDeleteIngredient}
-            onUnitChange={handleUnitChange}
             getUnitCategory={getUnitCategory}
             getProductPrice={getProductPrice}
           />
@@ -208,7 +202,6 @@ export const PlatePriceContent = () => {
             products={products}
             onChange={handleChange}
             onDelete={handleDeleteIngredient}
-            onUnitChange={handleUnitChange}
             getUnitCategory={getUnitCategory}
             getProductPrice={getProductPrice}
           />

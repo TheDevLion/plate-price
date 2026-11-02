@@ -46,6 +46,9 @@ export const translations = {
     cancel: "Cancel",
     ok: "OK",
     languageToggle: "EN/PT",
+    volume: "Volume",
+    weight: "Weight",
+    random: "Other units",
   },
   pt: {
     appTitle: "Plate Price",
@@ -90,6 +93,9 @@ export const translations = {
     cancel: "Cancelar",
     ok: "OK",
     languageToggle: "PT/EN",
+    volume: "Volume",
+    weight: "Peso",
+    random: "Outras unidades",
   },
 } as const;
 

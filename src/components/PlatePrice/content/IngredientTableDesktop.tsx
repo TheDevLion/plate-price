@@ -1,5 +1,4 @@
-import type { SyntheticEvent } from "react";
-import { UnitPicker, type Option } from "../../../core/UnitPicker";
+import { UnitPicker } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
 import {
   productId,
@@ -21,11 +20,6 @@ type IngredientTableDesktopProps = {
   products: Product[];
   onChange: (id: string, field: "productId" | "priceId" | "quantity" | "unit", value: string | number) => void;
   onDelete: (id: string) => void;
-  onUnitChange: (
-    id: string,
-    event: SyntheticEvent<Element, Event>,
-    value: Option | null
-  ) => void;
   getUnitCategory: (productId: string) => string | undefined;
   getProductPrice: (ingredient: Ingredient) => number | undefined;
 };
@@ -35,7 +29,6 @@ export const IngredientTableDesktop = ({
   products,
   onChange,
   onDelete,
-  onUnitChange,
   getUnitCategory,
   getProductPrice,
 }: IngredientTableDesktopProps) => {
@@ -125,12 +118,10 @@ export const IngredientTableDesktop = ({
               </td>
               <td className="border border-grape-200 p-2 truncate">
                 <UnitPicker
-                  abbvVersion
                   unitState={ingredientUnit(ingredient)}
                   category={getUnitCategory(ingredientProductId(ingredient))}
-                  handleUnitChange={(e, value) =>
-                    onUnitChange(ingredientId(ingredient), e, value)
-                  }
+                  onChange={unit => onChange(ingredientId(ingredient), "unit", unit)}
+                  disabled={!ingredientProductId(ingredient)}
                 />
               </td>
               <td className="border border-grape-200 p-2 text-right font-semibold truncate">
