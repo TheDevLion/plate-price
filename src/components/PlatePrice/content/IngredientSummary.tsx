@@ -1,3 +1,5 @@
+import { Add } from "@mui/icons-material";
+import { Button } from "@mui/material";
 import { useI18n } from "../../../i18n/useI18n";
 
 type IngredientSummaryProps = {
@@ -14,23 +16,17 @@ export const IngredientSummary = ({
   const { t } = useI18n();
 
   return (
-    <div className="w-full max-w-5xl flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 mb-6">
-      <button
-        onClick={onAddIngredient}
-        className="bg-grape-600 hover:bg-grape-700 text-white px-4 py-2 rounded shadow"
-      >
+    <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+      <Button variant="contained" startIcon={<Add />} onClick={onAddIngredient}>
         {t("addIngredient")}
-      </button>
-      <div className="flex flex-wrap gap-3 text-sm justify-center sm:justify-end">
-        <div className="bg-white border border-grape-200 rounded-md px-3 py-2 shadow-sm">
-          <span className="text-grape-700">{t("totalIngredients")}:</span>{" "}
-          <span className="font-semibold">{totalCount}</span>
+      </Button>
+      <div className="flex flex-wrap items-center gap-6">
+        <div className="text-sm text-grape-700">
+          {t("totalIngredients")}: <span className="font-semibold tabular-nums text-ink">{totalCount}</span>
         </div>
-        <div className="bg-white border border-grape-200 rounded-md px-3 py-2 shadow-sm">
-          <span className="text-grape-700">{t("totalCost")}:</span>{" "}
-          <span className="font-semibold">
-            {t("currencyPrefix")} {totalCost.toFixed(2)}
-          </span>
+        <div className="text-right">
+          <div className="text-xs font-medium text-grape-700">{t("totalCost")}</div>
+          <div className="text-2xl font-semibold tabular-nums text-ink">{t("currencyPrefix")} {totalCost.toFixed(2)}</div>
         </div>
       </div>
     </div>

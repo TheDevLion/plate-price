@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
+import { useMediaQuery } from "@mui/material";
 import {
   useIngredients,
   useProducts,
@@ -32,22 +33,15 @@ export const PlatePriceContent = () => {
   const { products, loadProducts } = useProducts();
   const { ingredients, setIngredients, loadIngredients, saveIngredients } = useIngredients();
 
-  const [ingredientsToShow, setIngredientsToShow] = useState<Ingredient[]>([]);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const ingredientsToShow = ingredients.filter(ingredient => ingredientDatasheetId(ingredient) === selectedSheet);
 
   useEffect(() => {
     loadIngredients();
     loadProducts();
   }, [loadIngredients, loadProducts]);
 
-  useEffect(() => {
-    if (ingredients) {
-      const recipeIngredients = ingredients.filter(i => ingredientDatasheetId(i) === selectedSheet)
-      setIngredientsToShow(recipeIngredients);
-    }
-  }, [selectedSheet])
-
   const persistIngredients = (newIngredients: Ingredient[]) => {
-    setIngredientsToShow(newIngredients);
     const otherRecipesIngredients = ingredients.filter(i => ingredientDatasheetId(i) !== selectedSheet);
 
     const newTotalIngredients = [...otherRecipesIngredients, ...newIngredients]
@@ -81,12 +75,14 @@ export const PlatePriceContent = () => {
     const updated = ingredientsToShow.map((i) => {
       if (ingredientId(i) !== id) return i;
       if (field === "productId") {
+        const product = products.find(product => productId(product) === value);
+        const prices = product ? productPrices(product) : [];
         return makeIngredient(
           ingredientId(i),
           String(value),
-          ingredientPriceId(i),
+          prices.length === 1 ? priceId(prices[0]) : "",
           ingredientQuantity(i),
-          ingredientUnit(i),
+          product ? productUnit(product) : "",
           ingredientDatasheetId(i)
         );
       }
@@ -144,8 +140,6 @@ export const PlatePriceContent = () => {
     }
   };
 
-
-
   const getUnitCategory = (productIdValue: string) => {
     if (!productIdValue) return undefined;
 
@@ -154,15 +148,9 @@ export const PlatePriceContent = () => {
 
     const conversion = CONVERSIONS.find(c => c.abbv === productUnit(product));
     return conversion?.category;
-};
+  };
 
-  const totalCost = useMemo(() => {
-    return ingredientsToShow.reduce((sum, ingredient) => {
-      const value = getProductPrice(ingredient);
-      return sum + (value ?? 0);
-    }, 0);
-  }, [ingredientsToShow, products]);
-
+  const totalCost = ingredientsToShow.reduce((sum, ingredient) => sum + (getProductPrice(ingredient) ?? 0), 0);
 
   if (!selectedSheet)
     return (
@@ -172,7 +160,7 @@ export const PlatePriceContent = () => {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center py-8 px-2">
+    <div className="mx-auto flex max-w-5xl flex-col py-6 px-3 sm:px-4">
       <IngredientSummary
         totalCount={ingredientsToShow.length}
         totalCost={totalCost}
@@ -180,14 +168,14 @@ export const PlatePriceContent = () => {
       />
 
       {ingredientsToShow.length === 0 ? (
-        <div className="w-full max-w-5xl bg-white border border-grape-200 rounded-lg shadow-sm p-6 text-center text-sm text-ink-600 mb-6">
+        <div className="w-full max-w-5xl bg-white border border-grape-200 rounded-lg shadow-sm p-6 text-center text-sm text-grape-700 mb-6">
           <div className="text-base font-semibold text-ink mb-1">
             {t("emptyIngredientsTitle")}
           </div>
           <div>{t("emptyIngredientsDescription")}</div>
         </div>
       ) : (
-        <>
+        isDesktop ? (
           <IngredientTableDesktop
             ingredients={ingredientsToShow}
             products={products}
@@ -197,6 +185,7 @@ export const PlatePriceContent = () => {
             getProductPrice={getProductPrice}
           />
 
+        ) : (
           <IngredientCardsMobile
             ingredients={ingredientsToShow}
             products={products}
@@ -205,7 +194,7 @@ export const PlatePriceContent = () => {
             getUnitCategory={getUnitCategory}
             getProductPrice={getProductPrice}
           />
-        </>
+        )
       )}
     </div>
   );

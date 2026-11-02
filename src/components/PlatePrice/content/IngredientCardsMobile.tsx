@@ -1,3 +1,5 @@
+import { Delete } from "@mui/icons-material";
+import { Button } from "@mui/material";
 import { UnitPicker } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
 import {
@@ -36,16 +38,17 @@ export const IngredientCardsMobile = ({
   const { t } = useI18n();
 
   return (
-    <div className="w-full sm:hidden space-y-3">
+    <div className="w-full space-y-4">
       {ingredients.map((ingredient) => (
         <div
           key={ingredientId(ingredient)}
-          className="border border-grape-200 rounded-lg bg-white shadow-sm"
+          className="border border-grape-100 rounded-xl bg-white"
         >
-          <div className="grid grid-cols-1 gap-2 p-3">
-            <FieldBlock label={t("tableProduct")}>
+          <div className="grid grid-cols-1 gap-3 p-4">
+            <FieldBlock label={t("tableProduct")} htmlFor={`ingredient-product-${ingredientId(ingredient)}`}>
               <select
-                className="border border-grape-200 rounded p-2 w-full text-sm"
+                className="ui-control w-full"
+                id={`ingredient-product-${ingredientId(ingredient)}`}
                 value={ingredientProductId(ingredient)}
                 onChange={(e) =>
                   onChange(ingredientId(ingredient), "productId", e.target.value)
@@ -60,9 +63,10 @@ export const IngredientCardsMobile = ({
               </select>
             </FieldBlock>
 
-            <FieldBlock label={t("tablePriceDescription")}>
+            <FieldBlock label={t("tablePriceDescription")} htmlFor={`ingredient-price-${ingredientId(ingredient)}`}>
               <select
-                className="border border-grape-200 rounded p-2 w-full text-sm"
+                className="ui-control w-full"
+                id={`ingredient-price-${ingredientId(ingredient)}`}
                 value={ingredientPriceId(ingredient)}
                 onChange={(e) =>
                   onChange(ingredientId(ingredient), "priceId", e.target.value)
@@ -85,11 +89,15 @@ export const IngredientCardsMobile = ({
             </FieldBlock>
           </div>
 
-          <div className="border-t border-grape-200 grid grid-cols-4 gap-2 p-3 items-center">
-            <FieldBlock label={t("tableQuantity")} className="flex flex-col items-center">
+          <div className="grid grid-cols-2 gap-3 px-4 pb-4">
+            <FieldBlock label={t("tableQuantity")} htmlFor={`ingredient-quantity-${ingredientId(ingredient)}`}>
               <input
                 type="number"
-                className="border border-grape-200 rounded p-2 w-full text-sm"
+                id={`ingredient-quantity-${ingredientId(ingredient)}`}
+                min="0"
+                step="any"
+                inputMode="decimal"
+                className="ui-control w-full"
                 value={ingredientQuantity(ingredient)}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -101,7 +109,7 @@ export const IngredientCardsMobile = ({
                 }}
               />
             </FieldBlock>
-            <FieldBlock label={t("tableUnit")} className="flex flex-col items-center">
+            <FieldBlock label={t("tableUnit")} className="min-w-0">
               <UnitPicker
                 unitState={ingredientUnit(ingredient)}
                 category={getUnitCategory(ingredientProductId(ingredient))}
@@ -110,8 +118,10 @@ export const IngredientCardsMobile = ({
               />
             </FieldBlock>
 
-            <FieldBlock label={t("tableTotal")} className="flex flex-col items-center">
-              <div className="text-sm font-semibold">
+          </div>
+          <div className="flex items-center justify-between gap-3 border-t border-grape-100 px-4 py-3">
+            <FieldBlock label={t("tableTotal")}>
+              <div className="text-lg font-semibold tabular-nums">
                 {t("currencyPrefix")}{" "}
                 {Number.isFinite(getProductPrice(ingredient))
                   ? getProductPrice(ingredient)!.toFixed(2)
@@ -119,14 +129,9 @@ export const IngredientCardsMobile = ({
               </div>
             </FieldBlock>
 
-            <FieldBlock label={t("tableActions")} className="flex flex-col items-center">
-              <button
-                className="bg-ink hover:bg-black text-white px-2 py-1 rounded text-xs w-full"
-                onClick={() => onDelete(ingredientId(ingredient))}
-              >
-                {t("delete")}
-              </button>
-            </FieldBlock>
+            <Button color="error" startIcon={<Delete fontSize="small" />} onClick={() => onDelete(ingredientId(ingredient))}>
+              {t("delete")}
+            </Button>
           </div>
         </div>
       ))}

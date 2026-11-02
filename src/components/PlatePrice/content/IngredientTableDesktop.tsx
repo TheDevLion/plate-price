@@ -1,3 +1,5 @@
+import { Delete } from "@mui/icons-material";
+import { IconButton, Tooltip } from "@mui/material";
 import { UnitPicker } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
 import {
@@ -35,26 +37,26 @@ export const IngredientTableDesktop = ({
   const { t } = useI18n();
 
   return (
-    <div className="w-full overflow-x-auto hidden sm:block">
-      <table className="min-w-[640px] table-fixed border border-grape-200 shadow-md rounded-xl overflow-hidden text-xs sm:text-sm">
-        <thead className="bg-grape-50">
+    <div className="w-full overflow-x-auto rounded-xl border border-grape-100 bg-white">
+      <table className="w-full table-fixed text-sm">
+        <thead className="bg-grape-50 text-left text-grape-800">
           <tr>
-            <th className="p-2 border border-grape-200 w-[26%] truncate">
+            <th scope="col" className="p-3 w-[24%] truncate">
               {t("tableProduct")}
             </th>
-            <th className="p-2 border border-grape-200 w-[28%] truncate">
+            <th scope="col" className="p-3 w-[28%] truncate">
               {t("tablePriceDescription")}
             </th>
-            <th className="p-2 border border-grape-200 w-[10%] truncate">
+            <th scope="col" className="p-3 w-[12%] truncate">
               {t("tableQuantity")}
             </th>
-            <th className="p-2 border border-grape-200 w-[10%] truncate">
+            <th scope="col" className="p-3 w-[12%] truncate">
               {t("tableUnit")}
             </th>
-            <th className="p-2 border border-grape-200 w-[12%] truncate">
+            <th scope="col" className="p-3 w-[16%] truncate">
               {t("tableTotal")}
             </th>
-            <th className="p-2 border border-grape-200 w-[14%] truncate">
+            <th scope="col" className="p-3 w-[8%] truncate">
               {t("tableActions")}
             </th>
           </tr>
@@ -62,9 +64,10 @@ export const IngredientTableDesktop = ({
         <tbody>
           {ingredients.map((ingredient) => (
             <tr key={ingredientId(ingredient)}>
-              <td className="border border-grape-200 p-2 truncate">
+              <td className="border-t border-grape-100 p-3 truncate">
                 <select
-                  className="border border-grape-200 rounded p-1 w-full min-w-0 truncate"
+                  className="ui-control w-full truncate"
+                  aria-label={t("tableProduct")}
                   value={ingredientProductId(ingredient)}
                   onChange={(e) =>
                     onChange(ingredientId(ingredient), "productId", e.target.value)
@@ -78,9 +81,10 @@ export const IngredientTableDesktop = ({
                   ))}
                 </select>
               </td>
-              <td className="border border-grape-200 p-2 truncate">
+              <td className="border-t border-grape-100 p-3 truncate">
                 <select
-                  className="border border-grape-200 rounded p-1 w-full min-w-0 truncate"
+                  className="ui-control w-full truncate"
+                  aria-label={t("tablePriceDescription")}
                   value={ingredientPriceId(ingredient)}
                   onChange={(e) =>
                     onChange(ingredientId(ingredient), "priceId", e.target.value)
@@ -101,10 +105,14 @@ export const IngredientTableDesktop = ({
                   })()}
                 </select>
               </td>
-              <td className="border border-grape-200 p-2 truncate">
+              <td className="border-t border-grape-100 p-3 truncate">
                 <input
                   type="number"
-                  className="border border-grape-200 rounded p-1 w-full min-w-0"
+                  min="0"
+                  step="any"
+                  inputMode="decimal"
+                  aria-label={t("tableQuantity")}
+                  className="ui-control w-full tabular-nums"
                   value={ingredientQuantity(ingredient)}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -116,7 +124,7 @@ export const IngredientTableDesktop = ({
                   }}
                 />
               </td>
-              <td className="border border-grape-200 p-2 truncate">
+              <td className="border-t border-grape-100 p-3 truncate">
                 <UnitPicker
                   unitState={ingredientUnit(ingredient)}
                   category={getUnitCategory(ingredientProductId(ingredient))}
@@ -124,7 +132,7 @@ export const IngredientTableDesktop = ({
                   disabled={!ingredientProductId(ingredient)}
                 />
               </td>
-              <td className="border border-grape-200 p-2 text-right font-semibold truncate">
+              <td className="border-t border-grape-100 p-3 text-right font-semibold tabular-nums truncate">
                 <span className="block truncate">
                   {t("currencyPrefix")}{" "}
                   {Number.isFinite(getProductPrice(ingredient))
@@ -132,13 +140,12 @@ export const IngredientTableDesktop = ({
                     : "0.00"}
                 </span>
               </td>
-              <td className="border border-grape-200 p-2 text-center truncate">
-                <button
-                  className="bg-ink hover:bg-black text-white px-2 py-1 rounded"
-                  onClick={() => onDelete(ingredientId(ingredient))}
-                >
-                  {t("delete")}
-                </button>
+              <td className="border-t border-grape-100 p-3 text-center truncate">
+                <Tooltip title={t("delete")}>
+                  <IconButton color="error" aria-label={t("delete")} onClick={() => onDelete(ingredientId(ingredient))}>
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               </td>
             </tr>
           ))}
