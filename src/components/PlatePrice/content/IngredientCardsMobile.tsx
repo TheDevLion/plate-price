@@ -1,10 +1,10 @@
+import { ProductPicker } from "./ProductPicker";
 import { Delete } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { UnitPicker } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
 import {
   productId,
-  productName,
   productPrices,
   priceId,
   priceDescription,
@@ -46,21 +46,12 @@ export const IngredientCardsMobile = ({
         >
           <div className="grid grid-cols-1 gap-3 p-4">
             <FieldBlock label={t("tableProduct")} htmlFor={`ingredient-product-${ingredientId(ingredient)}`}>
-              <select
-                className="ui-control w-full"
+              <ProductPicker
                 id={`ingredient-product-${ingredientId(ingredient)}`}
+                products={products}
                 value={ingredientProductId(ingredient)}
-                onChange={(e) =>
-                  onChange(ingredientId(ingredient), "productId", e.target.value)
-                }
-              >
-                <option value="">{t("selectProduct")}</option>
-                {products.map((product) => (
-                  <option key={productId(product)} value={productId(product)}>
-                    {productName(product)}
-                  </option>
-                ))}
-              </select>
+                onChange={id => onChange(ingredientId(ingredient), "productId", id)}
+              />
             </FieldBlock>
 
             <FieldBlock label={t("tablePriceDescription")} htmlFor={`ingredient-price-${ingredientId(ingredient)}`}>

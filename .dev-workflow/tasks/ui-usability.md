@@ -59,3 +59,15 @@ Implementação e validação concluídas. Primeira versão 0.1.0 preparada loca
 ## Limites
 
 Não houve teste em aparelho físico ou leitor de tela. Dependências e divisão de bundles não foram alteradas. As instruções de deploy existentes continuam publicando master quando houver push.
+
+
+## Revisão solicitada: busca nos dropdowns
+
+O usuário pediu digitação no campo de produto dos ingredientes e também no seletor de unidades. Esta orientação substitui a decisão inicial de não oferecer busca.
+
+Intenção: localizar o produto pelo nome e a unidade pelo nome ou sigla, preservando os valores válidos do cálculo. A consulta digitada ganha foco; a escolha permanece explícita na lista. Manter paleta grape/ink, superfícies brancas, bordas leves, tipografia existente, base de 4px e controles de 44px. Reutilizar o Autocomplete do MUI e compartilhar ProductPicker entre desktop e celular.
+
+O usuário autorizou o push e a verificação do Pages na continuação desta atividade. O commit `1dbe0cd` já foi publicado com sucesso. A revisão foi validada para entrega em commit focado, sem novo incremento automático de versão.
+
+
+Validação da revisão: 23 testes passaram; lint, TypeScript, build e diff-check passaram. No Chrome isolado, foram conferidos produto e unidade em 320, 390, 1024 e 1440px: busca por texto, seleção por Enter e clique, valores calculados, nenhum resultado, restauração ao sair do campo, limpeza de produto e uso dentro do diálogo. Sem erros de console ou overflow horizontal. Revisão visual dos menus em desktop e celular concluída. O build continua avisando sobre tamanho do bundle e bases de compatibilidade desatualizadas.

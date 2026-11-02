@@ -25,7 +25,7 @@ afterEach(() => {
 describe("ingredient editing", () => {
   it("loads ingredients for the selected recipe and updates them when the shared state changes", () => {
     render(<I18nProvider><PlatePriceContent /></I18nProvider>);
-    expect((screen.getByRole("combobox", { name: "Product" }) as HTMLSelectElement).value).toBe("p1");
+    expect((screen.getByRole("combobox", { name: "Product" }) as HTMLInputElement).value).toBe("Flour");
     expect(screen.getAllByText("$ 2.00")).toHaveLength(2);
     act(() => useTechnicalDatasheetStore.getState().setIngredients([["i1", "p1", "price1", 500, "g", "r1"]]));
     expect((screen.getByRole("spinbutton") as HTMLInputElement).value).toBe("500");
@@ -35,9 +35,12 @@ describe("ingredient editing", () => {
   it("updates unit and price when choosing a different product, preserving the quantity", () => {
     render(<I18nProvider><PlatePriceContent /></I18nProvider>);
     const product = screen.getByRole("combobox", { name: "Product" });
-    fireEvent.change(product, { target: { value: "p2" } });
+    fireEvent.focus(product);
+    fireEvent.change(product, { target: { value: "Milk" } });
+    fireEvent.click(screen.getByRole("option", { name: "Milk" }));
     expect(useTechnicalDatasheetStore.getState().ingredients[0]).toEqual(["i1", "p2", "price2", 250, "L", "r1"]);
-    fireEvent.change(product, { target: { value: "p3" } });
+    fireEvent.change(product, { target: { value: "Oil" } });
+    fireEvent.click(screen.getByRole("option", { name: "Oil" }));
     expect(useTechnicalDatasheetStore.getState().ingredients[0][2]).toBe("");
     fireEvent.change(product, { target: { value: "" } });
     expect(useTechnicalDatasheetStore.getState().ingredients[0]).toEqual(["i1", "", "", 250, "", "r1"]);

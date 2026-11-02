@@ -1,5 +1,10 @@
 # Changelog
 
+## Não lançado
+
+- O campo de produto dos ingredientes agora permite buscar pelo nome, no celular e no desktop.
+- O seletor de unidades agora permite digitar para buscar por nome ou sigla, mantendo o filtro por categoria e a seleção de unidades válidas.
+
 ## 0.1.0 — preparação local
 
 Primeira versão numerada do Plate Price. Base anterior: `0.0.0`, sem releases ou tags existentes na consulta ao remoto. Esta versão ainda não foi publicada.

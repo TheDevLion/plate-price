@@ -1,10 +1,10 @@
+import { ProductPicker } from "./ProductPicker";
 import { Delete } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { UnitPicker } from "../../../core/UnitPicker";
 import type { Ingredient, Product } from "../store";
 import {
   productId,
-  productName,
   productPrices,
   priceId,
   priceDescription,
@@ -65,21 +65,12 @@ export const IngredientTableDesktop = ({
           {ingredients.map((ingredient) => (
             <tr key={ingredientId(ingredient)}>
               <td className="border-t border-grape-100 p-3 truncate">
-                <select
-                  className="ui-control w-full truncate"
-                  aria-label={t("tableProduct")}
+                <ProductPicker
+                  id={`ingredient-product-${ingredientId(ingredient)}`}
+                  products={products}
                   value={ingredientProductId(ingredient)}
-                  onChange={(e) =>
-                    onChange(ingredientId(ingredient), "productId", e.target.value)
-                  }
-                >
-                  <option value="">{t("selectProduct")}</option>
-                  {products.map((product) => (
-                    <option key={productId(product)} value={productId(product)}>
-                      {productName(product)}
-                    </option>
-                  ))}
-                </select>
+                  onChange={id => onChange(ingredientId(ingredient), "productId", id)}
+                />
               </td>
               <td className="border-t border-grape-100 p-3 truncate">
                 <select
