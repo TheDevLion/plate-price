@@ -52,6 +52,27 @@ const theme = createTheme({
         root: { minWidth: 44, minHeight: 44 },
       },
     },
+    MuiInputBase: {
+      styleOverrides: {
+        input: { "@media (max-width: 639px), (pointer: coarse)": { fontSize: "1rem" } },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          "@media (max-width: 639px), (pointer: coarse)": {
+            "& .MuiAutocomplete-input": { minWidth: 0 },
+            "& .MuiAutocomplete-endAdornment": { right: 4 },
+            "&.MuiAutocomplete-hasPopupIcon .MuiOutlinedInput-root": { paddingRight: 52 },
+            "&.MuiAutocomplete-hasClearIcon.MuiAutocomplete-hasPopupIcon .MuiOutlinedInput-root": { paddingRight: 96 },
+          },
+        },
+        listbox: {
+          maxHeight: 320,
+          "@media (max-width: 639px), (max-height: 480px)": { maxHeight: "min(320px, 40dvh)" },
+        },
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => ({

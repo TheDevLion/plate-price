@@ -32,7 +32,8 @@ export const ProductPicker = ({ products, value, onChange, id }: ProductPickerPr
       clearText={t("clearSelection")}
       noOptionsText={t("noProductsFound")}
       slotProps={{
-        listbox: { sx: { maxHeight: 320, "& .MuiAutocomplete-option": { minHeight: 44, overflowWrap: "anywhere" } } },
+        popper: { modifiers: [{ name: "preventOverflow", options: { padding: 12 } }] },
+        listbox: { sx: { "& .MuiAutocomplete-option": { minHeight: 44, overflowWrap: "anywhere" } } },
       }}
       renderInput={params => (
         <TextField

@@ -47,7 +47,9 @@ export const ConfirmDialog = ({
       maxWidth="xs"
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
-      slotProps={{ paper: { component: "form", onSubmit: handleConfirm } }}
+      slotProps={{ paper: { component: "form", onSubmit: handleConfirm, sx: {
+        "@media (max-width: 639px), (max-height: 480px)": { m: 2, width: "calc(100% - 32px)", maxHeight: "calc(100dvh - 32px)", overflowWrap: "anywhere" },
+      } } }}
     >
       <DialogTitle id={titleId}>{title}</DialogTitle>
       <DialogContent>
@@ -64,7 +66,10 @@ export const ConfirmDialog = ({
           />
         )}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+      <DialogActions sx={{ px: 3, pb: 2, "@media (max-width: 639px)": {
+        display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 1,
+        "& > :not(style) ~ :not(style)": { marginLeft: 0 },
+      } }}>
         <Button onClick={onClose} color="secondary" autoFocus={noText}>
           {t("cancel")}
         </Button>

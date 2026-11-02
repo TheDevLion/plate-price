@@ -42,8 +42,8 @@ export const UnitPicker = ({ unitState = "", category, onChange, disabled }: Uni
       closeText={t("close")}
       noOptionsText={t("noUnitsFound")}
       slotProps={{
-        popper: { style: { minWidth: 220, maxWidth: "calc(100vw - 32px)" } },
-        listbox: { sx: { maxHeight: 320, "& .MuiAutocomplete-option": { minHeight: 44 }, "& .MuiAutocomplete-groupLabel": { position: "static" } } },
+        popper: { style: { minWidth: 220, maxWidth: "calc(100vw - 32px)" }, modifiers: [{ name: "preventOverflow", options: { padding: 12 } }] },
+        listbox: { sx: { "& .MuiAutocomplete-option": { minHeight: 44 }, "& .MuiAutocomplete-groupLabel": { position: "static" } } },
       }}
       renderInput={params => (
         <TextField
