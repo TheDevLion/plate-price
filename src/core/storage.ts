@@ -12,10 +12,12 @@ export const loadFromStorage = <T>(key: string, fallback: T): T => {
 };
 
 export const saveToStorage = <T>(key: string, value: T) => {
-  if (!isBrowser) return;
+  if (!isBrowser) return false;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
-    // no-op: ignore storage errors (quota, private mode)
+    // Keep the current data when storage is unavailable (quota, private mode).
+    return false;
   }
 };

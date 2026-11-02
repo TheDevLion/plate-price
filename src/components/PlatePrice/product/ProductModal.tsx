@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { useId, useState, type FormEvent } from "react";
+import { Alert, Dialog, DialogContent } from "@mui/material";
+import { ConfirmDialog } from "../../../design_system/ConfirmDialog";
 import {
   useProducts,
   type Product,
@@ -26,15 +28,27 @@ type Props = {
 
 export const ProductsModal = ({ onClose }: Props) => {
     const { t } = useI18n();
-    const { products, setProducts, loadProducts, saveProducts } = useProducts()
+    const { products: savedProducts, setProducts: commitProducts, saveProducts } = useProducts();
+    const [products, setProducts] = useState(savedProducts);
+    const [confirmDiscard, setConfirmDiscard] = useState(false);
+    const [productToDelete, setProductToDelete] = useState<string>();
+    const [saveError, setSaveError] = useState(false);
+    const titleId = useId();
+    const isDirty = JSON.stringify(products) !== JSON.stringify(savedProducts);
 
-    useEffect(() => {
-        loadProducts();
-    }, [loadProducts]);
+    const handleClose = () => {
+        if (isDirty) setConfirmDiscard(true);
+        else onClose();
+    };
 
-    
-    const saveChanges = () => {
-        saveProducts(products);
+    const saveChanges = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!saveProducts(products)) {
+            setSaveError(true);
+            return;
+        }
+        commitProducts(products);
+        onClose();
     };
 
     const handleAddProduct = () => {
@@ -43,8 +57,8 @@ export const ProductsModal = ({ onClose }: Props) => {
     };
 
     const handleDeleteProduct = (id: string) => {
-        if (!confirm(t("deleteProductConfirm"))) return;
         setProducts(products.filter((p) => productId(p) !== id));
+        setProductToDelete(undefined);
     };
 
     const handleAddPrice = (prodId: string) => {
@@ -114,26 +128,46 @@ export const ProductsModal = ({ onClose }: Props) => {
 
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-2">
-            <div className="bg-white w-[95%] sm:w-5/6 max-h-[90vh] rounded-lg shadow-lg relative flex flex-col">
-                
-                <ProductsModalHeader onAddProduct={handleAddProduct} onClose={onClose} />
-
-                <div className="flex-1 overflow-auto p-4 sm:p-6">
-                <ProductsTable
-                    products={products}
-                    onAddPrice={handleAddPrice}
-                    onDeleteProduct={handleDeleteProduct}
-                    onDeletePrice={handleDeletePrice}
-                    onChangeProduct={handleChangeProduct}
-                    onChangePrice={handleChangePrice}
-                />
-                </div>
-
-                <ProductsModalFooter onSave={saveChanges} />
-
-            </div>
-        </div>
-
+        <>
+            <Dialog
+                open
+                onClose={handleClose}
+                fullWidth
+                maxWidth="lg"
+                aria-labelledby={titleId}
+                slotProps={{ paper: { component: "form", onSubmit: saveChanges, sx: { m: { xs: 1, sm: 4 }, width: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" }, maxHeight: "90dvh" } } }}
+            >
+                <ProductsModalHeader titleId={titleId} onAddProduct={handleAddProduct} onClose={handleClose} />
+                <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
+                    {saveError && <Alert severity="error" sx={{ mb: 2 }}>{t("saveError")}</Alert>}
+                    <ProductsTable
+                        products={products}
+                        onAddPrice={handleAddPrice}
+                        onDeleteProduct={setProductToDelete}
+                        onDeletePrice={handleDeletePrice}
+                        onChangeProduct={handleChangeProduct}
+                        onChangePrice={handleChangePrice}
+                    />
+                </DialogContent>
+                <ProductsModalFooter onClose={handleClose} isDirty={isDirty} />
+            </Dialog>
+            <ConfirmDialog
+                open={confirmDiscard}
+                title={t("discardChangesTitle")}
+                description={t("discardChangesDescription")}
+                confirmLabel={t("discard")}
+                noText
+                onClose={() => setConfirmDiscard(false)}
+                onConfirm={onClose}
+            />
+            <ConfirmDialog
+                open={!!productToDelete}
+                title={t("deleteProductConfirm")}
+                description={products.find(product => productId(product) === productToDelete)?.[1]}
+                noText
+                onClose={() => setProductToDelete(undefined)}
+                onConfirm={() => { if (productToDelete) handleDeleteProduct(productToDelete); }}
+            />
+        </>
     );
 };

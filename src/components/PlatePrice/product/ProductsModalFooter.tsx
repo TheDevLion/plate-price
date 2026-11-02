@@ -3,16 +3,19 @@ import SaveIcon from "@mui/icons-material/Save";
 import { useI18n } from "../../../i18n/useI18n";
 
 type ProductsModalFooterProps = {
-  onSave: () => void;
+  onClose: () => void;
+  isDirty: boolean;
 };
 
-export const ProductsModalFooter = ({ onSave }: ProductsModalFooterProps) => {
+export const ProductsModalFooter = ({ onClose, isDirty }: ProductsModalFooterProps) => {
   const { t } = useI18n();
 
   return (
-    <div className="p-4 sm:p-6 border-t border-grape-200 sticky bottom-0 bg-white z-10 flex justify-end">
-      <Button variant="contained" startIcon={<SaveIcon />} onClick={onSave}>
-        {t("save")}
+    <div className="flex flex-wrap items-center justify-end gap-2 px-4 py-3 sm:px-6">
+      {isDirty && <span className="mr-auto text-sm text-grape-700" role="status">{t("unsavedChanges")}</span>}
+      <Button color="secondary" onClick={onClose}>{t("close")}</Button>
+      <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
+        {t("saveAndClose")}
       </Button>
     </div>
   );

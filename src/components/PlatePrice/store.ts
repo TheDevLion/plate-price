@@ -67,7 +67,7 @@ export type TechnicalDatasheetActions = {
     loadDatasheets: () => void;
     loadProducts: () => void;
     loadIngredients: () => void;
-    saveProducts: (products: Product[]) => void;
+    saveProducts: (products: Product[]) => boolean;
     saveIngredients: (ingredients: Ingredient[]) => void;
 }
 
