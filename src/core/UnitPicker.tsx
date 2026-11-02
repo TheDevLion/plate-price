@@ -27,13 +27,13 @@ export const UnitPicker = ({ unitState = "", category, onChange, disabled }: Uni
       renderValue={value => value ? value.replace("_", " ") : <span className="text-grape-700">{t("selectOption")}</span>}
       MenuProps={{
         slotProps: {
-          paper: { sx: { maxHeight: 320, minWidth: 220, maxWidth: "calc(100vw - 32px)" } },
+          paper: { style: { minWidth: 220 }, sx: { maxHeight: 320, maxWidth: "calc(100vw - 32px)" } },
         },
       }}
     >
       {units.flatMap((unit, index) => [
         ...(!index || units[index - 1].category !== unit.category
-          ? [<ListSubheader key={unit.category}>{t(unit.category as "volume" | "weight" | "random")}</ListSubheader>]
+          ? [<ListSubheader key={unit.category} disableSticky>{t(unit.category as "volume" | "weight" | "random")}</ListSubheader>]
           : []),
         <MenuItem key={unit.abbv} value={unit.abbv}>
           <span className="w-12 shrink-0 font-semibold">{unit.abbv.replace("_", " ")}</span>
